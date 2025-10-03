@@ -1,1 +1,25 @@
-print ("Hello World");
+name: Commit Hello World
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  add-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v3
+
+      - name: Create hello world file
+        run: echo "Hello World" > hello.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add hello.txt
+          git commit -m "Add hello world file" || echo "No changes to commit"
+          git push
