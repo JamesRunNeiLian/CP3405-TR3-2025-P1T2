@@ -1,7 +1,8 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
-  check:
+  check:                  # ← this must be indented under jobs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -9,4 +10,4 @@ jobs:
         run: |
           echo "Running basic checks"
           python -V || true
-          echo "OK"
+          echo "OK"
