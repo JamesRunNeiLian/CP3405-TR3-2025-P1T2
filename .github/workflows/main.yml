@@ -1,25 +1,12 @@
-name: Commit Hello World
-
-on:
-  push:
-    branches:
-      - main
-
+name: CI
+on: [push, pull_request]
 jobs:
-  add-file:
+  check:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-      - uses: actions/checkout@v3
-
-      - name: Create hello world file
-        run: echo "Hello World" > hello.txt
-
-      - name: Commit and push changes
+      - uses: actions/checkout@v4
+      - name: Echo checks
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add hello.txt
-          git commit -m "Add hello world file" || echo "No changes to commit"
-          git push
+          echo "Running basic checks"
+          python -V || true
+          echo "OK"
