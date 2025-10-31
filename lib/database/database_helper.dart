@@ -116,7 +116,7 @@ class DatabaseHelper {
       'email': 'lecturer@example.com',
       'password': 'lecturer123',
       'role': 'lecturer',
-      'full_name': 'Dr. John Doe',
+      'full_name': 'Dr. Tan',
       'created_at': DateTime.now().toIso8601String(),
     });
 
@@ -125,7 +125,7 @@ class DatabaseHelper {
       'email': 'student@my.jcu.edu.au',
       'password': 'student123',
       'role': 'student',
-      'full_name': 'Jane Smith',
+      'full_name': 'Dennis',
       'student_id': 'jd123456',
       'created_at': DateTime.now().toIso8601String(),
     });
