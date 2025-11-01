@@ -1,12 +1,12 @@
-class Seat {
-  final int? id;
-  final int classroomId;
+class SeatModel {
+  final String? id; // UUID from Supabase
+  final String classroomId;
   final String seatNumber;
   final int rowNumber;
   final int columnNumber;
   final bool isAvailable;
 
-  Seat({
+  SeatModel({
     this.id,
     required this.classroomId,
     required this.seatNumber,
@@ -17,35 +17,35 @@ class Seat {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      if (id != null) 'id': id,
       'classroom_id': classroomId,
       'seat_number': seatNumber,
       'row_number': rowNumber,
       'column_number': columnNumber,
-      'is_available': isAvailable ? 1 : 0,
+      'is_available': isAvailable,
     };
   }
 
-  factory Seat.fromMap(Map<String, dynamic> map) {
-    return Seat(
-      id: map['id'],
-      classroomId: map['classroom_id'],
-      seatNumber: map['seat_number'],
-      rowNumber: map['row_number'],
-      columnNumber: map['column_number'],
-      isAvailable: map['is_available'] == 1,
+  factory SeatModel.fromMap(Map<String, dynamic> map) {
+    return SeatModel(
+      id: map['id'] as String?,
+      classroomId: map['classroom_id'] as String,
+      seatNumber: map['seat_number'] as String,
+      rowNumber: map['row_number'] as int,
+      columnNumber: map['column_number'] as int,
+      isAvailable: map['is_available'] as bool? ?? true,
     );
   }
 
-  Seat copyWith({
-    int? id,
-    int? classroomId,
+  SeatModel copyWith({
+    String? id,
+    String? classroomId,
     String? seatNumber,
     int? rowNumber,
     int? columnNumber,
     bool? isAvailable,
   }) {
-    return Seat(
+    return SeatModel(
       id: id ?? this.id,
       classroomId: classroomId ?? this.classroomId,
       seatNumber: seatNumber ?? this.seatNumber,
@@ -54,4 +54,4 @@ class Seat {
       isAvailable: isAvailable ?? this.isAvailable,
     );
   }
-} 
+}

@@ -1,15 +1,15 @@
-class Reservation {
-  final int? id;
-  final int userId;
-  final int seatId;
-  final int classroomId;
+class ReservationModel {
+  final String? id; // UUID from Supabase
+  final String userId;
+  final String seatId;
+  final String classroomId;
   final DateTime reservationDate;
   final String startTime;
   final String endTime;
   final String status; // 'pending', 'confirmed', 'cancelled', 'completed'
   final DateTime createdAt;
 
-  Reservation({
+  ReservationModel({
     this.id,
     required this.userId,
     required this.seatId,
@@ -23,7 +23,7 @@ class Reservation {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      if (id != null) 'id': id,
       'user_id': userId,
       'seat_id': seatId,
       'classroom_id': classroomId,
@@ -35,32 +35,32 @@ class Reservation {
     };
   }
 
-  factory Reservation.fromMap(Map<String, dynamic> map) {
-    return Reservation(
-      id: map['id'],
-      userId: map['user_id'],
-      seatId: map['seat_id'],
-      classroomId: map['classroom_id'],
-      reservationDate: DateTime.parse(map['reservation_date']),
-      startTime: map['start_time'],
-      endTime: map['end_time'],
-      status: map['status'],
-      createdAt: DateTime.parse(map['created_at']),
+  factory ReservationModel.fromMap(Map<String, dynamic> map) {
+    return ReservationModel(
+      id: map['id'] as String?,
+      userId: map['user_id'] as String,
+      seatId: map['seat_id'] as String,
+      classroomId: map['classroom_id'] as String,
+      reservationDate: DateTime.parse(map['reservation_date'] as String),
+      startTime: map['start_time'] as String,
+      endTime: map['end_time'] as String,
+      status: map['status'] as String,
+      createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
 
-  Reservation copyWith({
-    int? id,
-    int? userId,
-    int? seatId,
-    int? classroomId,
+  ReservationModel copyWith({
+    String? id,
+    String? userId,
+    String? seatId,
+    String? classroomId,
     DateTime? reservationDate,
     String? startTime,
     String? endTime,
     String? status,
     DateTime? createdAt,
   }) {
-    return Reservation(
+    return ReservationModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       seatId: seatId ?? this.seatId,

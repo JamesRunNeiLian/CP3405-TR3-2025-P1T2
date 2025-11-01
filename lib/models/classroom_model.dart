@@ -1,5 +1,5 @@
-class Classroom {
-  final int? id;
+class ClassroomModel {
+  final String? id; // UUID from Supabase
   final String name;
   final String building;
   final String roomNumber;
@@ -7,7 +7,7 @@ class Classroom {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Classroom({
+  ClassroomModel({
     this.id,
     required this.name,
     required this.building,
@@ -19,7 +19,7 @@ class Classroom {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      if (id != null) 'id': id,
       'name': name,
       'building': building,
       'room_number': roomNumber,
@@ -29,20 +29,20 @@ class Classroom {
     };
   }
 
-  factory Classroom.fromMap(Map<String, dynamic> map) {
-    return Classroom(
-      id: map['id'],
-      name: map['name'],
-      building: map['building'],
-      roomNumber: map['room_number'],
-      capacity: map['capacity'],
-      createdAt: DateTime.parse(map['created_at']),
-      updatedAt: DateTime.parse(map['updated_at']),
+  factory ClassroomModel.fromMap(Map<String, dynamic> map) {
+    return ClassroomModel(
+      id: map['id'] as String?,
+      name: map['name'] as String,
+      building: map['building'] as String,
+      roomNumber: map['room_number'] as String,
+      capacity: map['capacity'] as int,
+      createdAt: DateTime.parse(map['created_at'] as String),
+      updatedAt: DateTime.parse(map['updated_at'] as String),
     );
   }
 
-  Classroom copyWith({
-    int? id,
+  ClassroomModel copyWith({
+    String? id,
     String? name,
     String? building,
     String? roomNumber,
@@ -50,7 +50,7 @@ class Classroom {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return Classroom(
+    return ClassroomModel(
       id: id ?? this.id,
       name: name ?? this.name,
       building: building ?? this.building,

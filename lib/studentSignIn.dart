@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/services/auth_service.dart';
-import 'package:smartseat/models/user_model.dart';
 import 'package:smartseat/student_home_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentSignInPage extends StatefulWidget {
   const StudentSignInPage({super.key});
@@ -30,9 +30,9 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    print('=== LOGIN ATTEMPT ===');
+    print('=== SUPABASE LOGIN ATTEMPT ===');
     print('Email entered: $email');
-    print('Password entered: $password');
+    print('Password length: ${password.length}');
 
     if (email.isEmpty || password.isEmpty) {
       _showSnackBar('Please enter email and password', isError: true);
@@ -44,39 +44,62 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     });
 
     try {
-      final user = await _authService.login(email, password);
+      print('Attempting Supabase authentication...');
+      final userData = await _authService.login(email, password);
 
-      print('Login result: ${user != null ? "User found" : "User not found"}');
-      if (user != null) {
-        print('User role: ${user.role}');
-        print('User email: ${user.email}');
-      }
-
-      if (user != null && user.role == 'student') {
-        _showSnackBar('Login successful! Welcome ${user.fullName ?? user.email}');
-        // Navigate to student home page
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StudentHomePage(user: user),
-          ),
-        );
-      } else if (user != null && user.role != 'student') {
-        _showSnackBar('Please use the correct portal for your role', isError: true);
+      print('Login result: ${userData != null ? "Success" : "Failed"}');
+      
+      if (userData != null) {
+        print('User role: ${userData['role']}');
+        print('User email: ${userData['email']}');
+        
+        if (userData['role'] == 'student') {
+          _showSnackBar('Login successful! Welcome ${userData['full_name'] ?? email}');
+          
+          // Navigate to student home page
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StudentHomePage(
+                  userId: userData['id'],
+                  userEmail: userData['email'],
+                  userName: userData['full_name'] ?? 'Student',
+                ),
+              ),
+            );
+          }
+        } else {
+          _showSnackBar('Please use the correct portal for your role (${userData['role']})', isError: true);
+        }
       } else {
         _showSnackBar('Invalid email or password', isError: true);
       }
     } catch (e) {
       print('Login error: $e');
-      _showSnackBar('An error occurred: $e', isError: true);
+      String errorMessage = 'An error occurred during login';
+      
+      if (e.toString().contains('Invalid login credentials')) {
+        errorMessage = 'Invalid email or password';
+      } else if (e.toString().contains('Email not confirmed')) {
+        errorMessage = 'Please confirm your email address';
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'Network error. Please check your connection';
+      }
+      
+      _showSnackBar(errorMessage, isError: true);
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -183,6 +206,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                       controller: _passwordController,
                       obscureText: obscurePassword,
                       enabled: !isLoading,
+                      onSubmitted: (_) => _handleSignIn(),
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
                         contentPadding: const EdgeInsets.symmetric(
@@ -220,7 +244,10 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                         const Text('Remember me'),
                         const Spacer(),
                         TextButton(
-                          onPressed: isLoading ? null : () {},
+                          onPressed: isLoading ? null : () {
+                            // TODO: Implement password reset
+                            _showSnackBar('Password reset feature coming soon!');
+                          },
                           child: const Text(
                             'Forgot password?',
                             style: TextStyle(color: Colors.blueAccent),
@@ -276,7 +303,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            '📋 Demo Credentials:',
+                            '📋 Test Credentials:',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
@@ -284,46 +311,27 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                             ),
                           ),
                           const SizedBox(height: 8),
+                          const Text(
+                            'Create a test user in Supabase Dashboard:\n'
+                            'Authentication > Users > "Add User"',
+                            style: TextStyle(fontSize: 11),
+                          ),
+                          const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Expanded(
+                              Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                  children: const [
                                     Text(
-                                      'Email:',
-                                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'student@my.jcu.edu.au',
+                                      'Email: student@my.jcu.edu.au',
                                       style: TextStyle(fontSize: 11),
                                     ),
-                                    SizedBox(height: 4),
                                     Text(
-                                      'Password:',
-                                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'student123',
+                                      'Role: student',
                                       style: TextStyle(fontSize: 11),
                                     ),
                                   ],
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: isLoading ? null : () {
-                                  setState(() {
-                                    _emailController.text = 'student@my.jcu.edu.au';
-                                    _passwordController.text = 'student123';
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                ),
-                                child: const Text(
-                                  'Auto-fill',
-                                  style: TextStyle(fontSize: 11, color: Colors.white),
                                 ),
                               ),
                             ],

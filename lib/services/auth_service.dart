@@ -1,14 +1,23 @@
-import '../database/database_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/supabase_service.dart';
 import '../models/user_model.dart';
 
 class AuthService {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final SupabaseClient _supabase = SupabaseService.client;
 
-  Future<User?> login(String email, String password) async {
+  /// Sign in with email and password
+  Future<UserModel?> login(String email, String password) async {
     try {
-      final userMap = await _dbHelper.getUser(email, password);
-      if (userMap != null) {
-        return User.fromMap(userMap);
+      // Query the users table to find the user
+      final response = await _supabase
+          .from('users')
+          .select()
+          .eq('email', email)
+          .eq('password', password) // Note: In production, use proper password hashing
+          .single();
+
+      if (response != null) {
+        return UserModel.fromMap(response);
       }
       return null;
     } catch (e) {
@@ -17,21 +26,31 @@ class AuthService {
     }
   }
 
-  Future<bool> register(User user) async {
+  /// Register a new user
+  Future<bool> register(UserModel user) async {
     try {
-      final id = await _dbHelper.insertUser(user.toMap());
-      return id > 0;
+      final data = user.toMap();
+      data.remove('id'); // Let Supabase generate the ID
+      
+      await _supabase.from('users').insert(data);
+      return true;
     } catch (e) {
       print('Error during registration: $e');
       return false;
     }
   }
 
-  Future<User?> getUserById(int id) async {
+  /// Get user by ID
+  Future<UserModel?> getUserById(String id) async {
     try {
-      final userMap = await _dbHelper.getUserById(id);
-      if (userMap != null) {
-        return User.fromMap(userMap);
+      final response = await _supabase
+          .from('users')
+          .select()
+          .eq('id', id)
+          .single();
+
+      if (response != null) {
+        return UserModel.fromMap(response);
       }
       return null;
     } catch (e) {
@@ -40,34 +59,49 @@ class AuthService {
     }
   }
 
-  Future<bool> updateUser(User user) async {
+  /// Update user
+  Future<bool> updateUser(UserModel user) async {
     try {
       if (user.id == null) return false;
-      final count = await _dbHelper.updateUser(user.id!, user.toMap());
-      return count > 0;
+
+      await _supabase
+          .from('users')
+          .update(user.toMap())
+          .eq('id', user.id!);
+
+      return true;
     } catch (e) {
       print('Error updating user: $e');
       return false;
     }
   }
 
-  Future<bool> deleteUser(int id) async {
+  /// Delete user
+  Future<bool> deleteUser(String id) async {
     try {
-      final count = await _dbHelper.deleteUser(id);
-      return count > 0;
+      await _supabase.from('users').delete().eq('id', id);
+      return true;
     } catch (e) {
       print('Error deleting user: $e');
       return false;
     }
   }
 
-  Future<List<User>> getAllUsers() async {
+  /// Get all users
+  Future<List<UserModel>> getAllUsers() async {
     try {
-      final userMaps = await _dbHelper.getAllUsers();
-      return userMaps.map((map) => User.fromMap(map)).toList();
+      final response = await _supabase.from('users').select();
+      return (response as List)
+          .map((user) => UserModel.fromMap(user))
+          .toList();
     } catch (e) {
       print('Error getting all users: $e');
       return [];
     }
+  }
+
+  /// Sign out
+  Future<void> signOut() async {
+    // Add any cleanup logic here if needed
   }
 }

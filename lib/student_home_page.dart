@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:smartseat/models/user_model.dart';
 import 'package:smartseat/seat_layout_page.dart';
 
 class StudentHomePage extends StatefulWidget {
-  final User user;
+  final String userId;
+  final String userEmail;
+  final String userName;
 
-  const StudentHomePage({super.key, required this.user});
+  const StudentHomePage({
+    super.key,
+    required this.userId,
+    required this.userEmail,
+    required this.userName,
+  });
 
   @override
   State<StudentHomePage> createState() => _StudentHomePageState();
@@ -14,17 +20,21 @@ class StudentHomePage extends StatefulWidget {
 class _StudentHomePageState extends State<StudentHomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [];
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    _pages.addAll([
-      HomeTabContent(user: widget.user),
+    _pages = [
+      HomeTabContent(
+        userId: widget.userId,
+        userEmail: widget.userEmail,
+        userName: widget.userName,
+      ),
       const ScheduleTabContent(),
       const MySeatsTabContent(),
       const StatsTabContent(),
-    ]);
+    ];
   }
 
   @override
@@ -87,22 +97,21 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
 // Home Tab Content
 class HomeTabContent extends StatelessWidget {
-  final User user;
+  final String userId;
+  final String userEmail;
+  final String userName;
 
-  const HomeTabContent({super.key, required this.user});
+  const HomeTabContent({
+    super.key,
+    required this.userId,
+    required this.userEmail,
+    required this.userName,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Extract first name from database or use fallback
-    String displayName = 'Student';
-    
-    if (user.fullName != null && user.fullName!.isNotEmpty) {
-      // Get first name from full name
-      displayName = user.fullName!.split(' ').first;
-    } else if (user.email.isNotEmpty) {
-      // Fallback to email username
-      displayName = user.email.split('@').first;
-    }
+    // Extract first name from userName
+    String displayName = userName.isNotEmpty ? userName.split(' ').first : 'Student';
 
     return SafeArea(
       child: SingleChildScrollView(

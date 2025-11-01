@@ -1,13 +1,13 @@
-class User {
-  final int? id;
+class UserModel {
+  final String? id; // UUID from Supabase
   final String email;
   final String password;
-  final String role;
+  final String role; // 'student', 'lecturer', 'admin'
   final String? fullName;
   final String? studentId;
   final DateTime createdAt;
 
-  User({
+  UserModel({
     this.id,
     required this.email,
     required this.password,
@@ -17,9 +17,10 @@ class User {
     required this.createdAt,
   });
 
+  /// Convert to Map for Supabase
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      if (id != null) 'id': id,
       'email': email,
       'password': password,
       'role': role,
@@ -29,20 +30,24 @@ class User {
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      id: map['id'],
-      email: map['email'],
-      password: map['password'],
-      role: map['role'],
-      fullName: map['full_name'],
-      studentId: map['student_id'],
-      createdAt: DateTime.parse(map['created_at']),
+  /// Create from Map (Supabase response)
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      id: map['id'] as String?,
+      email: map['email'] as String,
+      password: map['password'] as String,
+      role: map['role'] as String,
+      fullName: map['full_name'] as String?,
+      studentId: map['student_id'] as String?,
+      createdAt: map['created_at'] != null
+          ? DateTime.parse(map['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
-  User copyWith({
-    int? id,
+  /// Create a copy with updated fields
+  UserModel copyWith({
+    String? id,
     String? email,
     String? password,
     String? role,
@@ -50,7 +55,7 @@ class User {
     String? studentId,
     DateTime? createdAt,
   }) {
-    return User(
+    return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       password: password ?? this.password,
