@@ -95,7 +95,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
   }
 }
 
-// Home Tab Content
 class HomeTabContent extends StatelessWidget {
   final String userId;
   final String userEmail;
@@ -110,7 +109,6 @@ class HomeTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extract first name from userName
     String displayName = userName.isNotEmpty ? userName.split(' ').first : 'Student';
 
     return SafeArea(
@@ -118,7 +116,6 @@ class HomeTabContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -176,7 +173,6 @@ class HomeTabContent extends StatelessWidget {
               ),
             ),
 
-            // Next Booking Card
             Padding(
               padding: const EdgeInsets.all(16),
               child: Material(
@@ -283,7 +279,6 @@ class HomeTabContent extends StatelessWidget {
               ),
             ),
 
-            // Popular Venues Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -310,7 +305,6 @@ class HomeTabContent extends StatelessWidget {
               ),
             ),
 
-            // Venue Cards
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -369,7 +363,6 @@ class HomeTabContent extends StatelessWidget {
               ),
             ),
 
-            // Find a Seat Now Button
             Padding(
               padding: const EdgeInsets.all(16),
               child: SizedBox(
@@ -411,7 +404,6 @@ class HomeTabContent extends StatelessWidget {
   }
 }
 
-// Venue Card Widget
 class VenueCard extends StatelessWidget {
   final String roomNumber;
   final String availableSeats;
@@ -492,7 +484,6 @@ class VenueCard extends StatelessWidget {
   }
 }
 
-// Schedule Tab Content (Placeholder)
 class ScheduleTabContent extends StatelessWidget {
   const ScheduleTabContent({super.key});
 
@@ -507,7 +498,6 @@ class ScheduleTabContent extends StatelessWidget {
   }
 }
 
-// My Seats Tab Content (Placeholder)
 class MySeatsTabContent extends StatelessWidget {
   const MySeatsTabContent({super.key});
 
@@ -522,7 +512,6 @@ class MySeatsTabContent extends StatelessWidget {
   }
 }
 
-// Stats Tab Content (Placeholder)
 class StatsTabContent extends StatelessWidget {
   const StatsTabContent({super.key});
 

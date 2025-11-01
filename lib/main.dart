@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'services/supabase_service.dart';
+import 'package:smartseat/studentSignIn.dart';
+import 'package:smartseat/lecturersignin.dart';
+import 'package:smartseat/adminlogin.dart';
 
 void main() async {
-  // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Supabase
-  try {
-    await SupabaseService.initialize();
-    print('Supabase initialized successfully');
-  } catch (e) {
-    print('Supabase initialization error: $e');
-    print('Make sure you have set your Supabase credentials in lib/config/supabase_config.dart');
-  }
+  print('=== SMARTSEAT STARTED (MOCK MODE) ===');
+  print('Using mock authentication - no Supabase needed!');
   
   runApp(const SmartSeatApp());
 }
@@ -43,6 +38,30 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   String? selectedRole;
+
+  void _navigateToRole() {
+    if (selectedRole == null) return;
+
+    Widget destination;
+    switch (selectedRole) {
+      case 'student':
+        destination = const StudentSignInPage();
+        break;
+      case 'lecturer':
+        destination = const LecturerLoginScreen();
+        break;
+      case 'admin':
+        destination = const AdminLoginPage();
+        break;
+      default:
+        return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => destination),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +109,34 @@ class _WelcomePageState extends State<WelcomePage> {
 
               const SizedBox(height: 32),
 
+              // Mock Mode Banner
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green.shade700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'MOCK MODE - No Supabase needed!',
+                        style: TextStyle(
+                          color: Colors.green.shade900,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
               // Role selection section
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -135,7 +182,8 @@ class _WelcomePageState extends State<WelcomePage> {
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () {
-                        // Navigate to admin login
+                        setState(() => selectedRole = 'admin');
+                        _navigateToRole();
                       },
                       child: const Text(
                         "I am an admin",
@@ -185,11 +233,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   vertical: 8,
                 ),
                 child: ElevatedButton(
-                  onPressed: selectedRole != null
-                      ? () {
-                          // Navigate based on role
-                        }
-                      : null,
+                  onPressed: selectedRole != null ? _navigateToRole : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: selectedRole != null
                         ? Colors.blueAccent

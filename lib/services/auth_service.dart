@@ -6,18 +6,17 @@ class AuthService {
   final SupabaseClient _supabase = SupabaseService.client;
 
   /// Sign in with email and password
-  Future<UserModel?> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
-      // Query the users table to find the user
       final response = await _supabase
           .from('users')
           .select()
           .eq('email', email)
-          .eq('password', password) // Note: In production, use proper password hashing
-          .single();
+          .eq('password', password)
+          .maybeSingle();
 
       if (response != null) {
-        return UserModel.fromMap(response);
+        return response as Map<String, dynamic>;
       }
       return null;
     } catch (e) {
@@ -30,7 +29,7 @@ class AuthService {
   Future<bool> register(UserModel user) async {
     try {
       final data = user.toMap();
-      data.remove('id'); // Let Supabase generate the ID
+      data.remove('id');
       
       await _supabase.from('users').insert(data);
       return true;

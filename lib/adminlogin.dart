@@ -11,7 +11,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
   bool rememberMe = false;
   bool obscurePassword = true;
 
-  // Controllers as class fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -29,7 +28,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Blue Header
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 50, left: 16, right: 16, bottom: 32),
@@ -43,7 +41,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back button
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: const Row(
@@ -59,7 +56,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Admin Icon
                   Center(
                     child: Column(
                       children: [
@@ -96,7 +92,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
               ),
             ),
 
-            // Bottom White Section
             Container(
               color: Colors.white,
               width: double.infinity,
@@ -104,7 +99,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Login Form
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -170,7 +164,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                         ),
                         const SizedBox(height: 8),
 
-                        // Remember me + forgot password
                         Row(
                           children: [
                             Checkbox(
@@ -217,7 +210,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
 
                   const SizedBox(height: 16),
 
-                  // Secure Access Box
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -243,7 +235,6 @@ class AdminLoginPageState extends State<AdminLoginPage> {
 
                   const SizedBox(height: 16),
 
-                  // Features List
                   const Text(
                     "Administrator Dashboard Features",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

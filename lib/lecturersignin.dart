@@ -11,7 +11,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
   bool rememberMe = false;
   bool obscurePassword = true;
 
-  // Controllers as class fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -30,7 +29,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Blue top section
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -44,7 +42,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Back button
                     Row(
                       children: [
                         IconButton(
@@ -58,8 +55,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                       ],
                     ),
                     const SizedBox(height: 40),
-
-                    // Center logo and heading
                     Center(
                       child: Column(
                         children: [
@@ -98,7 +93,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                 ),
               ),
 
-              // White bottom section
               Container(
                 color: Colors.white,
                 width: double.infinity,
@@ -106,7 +100,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Login form card
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -169,7 +162,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           ),
                           const SizedBox(height: 8),
 
-                          // Remember me + forgot password
                           Row(
                             children: [
                               Checkbox(
@@ -215,7 +207,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
 
                     const SizedBox(height: 25),
 
-                    // Secure Access
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFFE3F2FD),
@@ -251,7 +242,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Features
                     const Text(
                       'Lecturer Dashboard Features',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -269,7 +259,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Support and footer
                     Center(
                       child: Column(
                         children: [
@@ -321,7 +310,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
   }
 }
 
-// Custom bullet item widget
 class FeatureItem extends StatelessWidget {
   final String text;
   const FeatureItem(this.text, {super.key});

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartseat/services/auth_service.dart';
+import 'package:smartseat/services/mock_auth_service.dart';
 import 'package:smartseat/student_home_page.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentSignInPage extends StatefulWidget {
   const StudentSignInPage({super.key});
@@ -17,7 +16,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
+  final MockAuthService _authService = MockAuthService();
 
   @override
   void dispose() {
@@ -30,7 +29,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    print('=== SUPABASE LOGIN ATTEMPT ===');
+    print('=== MOCK LOGIN ATTEMPT ===');
     print('Email entered: $email');
     print('Password length: ${password.length}');
 
@@ -44,7 +43,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     });
 
     try {
-      print('Attempting Supabase authentication...');
+      print('Attempting mock authentication...');
       final userData = await _authService.login(email, password);
 
       print('Login result: ${userData != null ? "Success" : "Failed"}');
@@ -56,15 +55,14 @@ class StudentSignInPageState extends State<StudentSignInPage> {
         if (userData['role'] == 'student') {
           _showSnackBar('Login successful! Welcome ${userData['full_name'] ?? email}');
           
-          // Navigate to student home page
           if (mounted) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => StudentHomePage(
-                  userId: userData['id'],
-                  userEmail: userData['email'],
-                  userName: userData['full_name'] ?? 'Student',
+                  userId: userData['id'].toString(),
+                  userEmail: userData['email'].toString(),
+                  userName: userData['full_name']?.toString() ?? 'Student',
                 ),
               ),
             );
@@ -77,17 +75,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
       }
     } catch (e) {
       print('Login error: $e');
-      String errorMessage = 'An error occurred during login';
-      
-      if (e.toString().contains('Invalid login credentials')) {
-        errorMessage = 'Invalid email or password';
-      } else if (e.toString().contains('Email not confirmed')) {
-        errorMessage = 'Please confirm your email address';
-      } else if (e.toString().contains('network')) {
-        errorMessage = 'Network error. Please check your connection';
-      }
-      
-      _showSnackBar(errorMessage, isError: true);
+      _showSnackBar('An error occurred during login', isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -245,7 +233,6 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                         const Spacer(),
                         TextButton(
                           onPressed: isLoading ? null : () {
-                            // TODO: Implement password reset
                             _showSnackBar('Password reset feature coming soon!');
                           },
                           child: const Text(
@@ -295,46 +282,44 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
+                        color: Colors.green.shade50,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.shade200),
+                        border: Border.all(color: Colors.green.shade200),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            children: [
+                              Icon(Icons.check_circle, color: Colors.green.shade700, size: 20),
+                              const SizedBox(width: 8),
+                              const Text(
+                                '✅ MOCK MODE - Ready to Use!',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
                           const Text(
-                            '📋 Test Credentials:',
+                            'Test Credentials:',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: Colors.blue,
+                              fontSize: 12,
                             ),
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Create a test user in Supabase Dashboard:\n'
-                            'Authentication > Users > "Add User"',
-                            style: TextStyle(fontSize: 11),
+                            'Email: student@my.jcu.edu.au\nPassword: student123',
+                            style: TextStyle(fontSize: 12, fontFamily: 'monospace'),
                           ),
                           const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
-                                      'Email: student@my.jcu.edu.au',
-                                      style: TextStyle(fontSize: 11),
-                                    ),
-                                    Text(
-                                      'Role: student',
-                                      style: TextStyle(fontSize: 11),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          const Text(
+                            'Or try:\nEmail: lecturer@example.com\nPassword: lecturer123',
+                            style: TextStyle(fontSize: 11, color: Colors.grey),
                           ),
                         ],
                       ),

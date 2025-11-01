@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Save this file as: lib/seat_layout_page.dart
-
 class SeatLayoutPage extends StatefulWidget {
   final String roomNumber;
   final String timeSlot;
@@ -19,19 +17,12 @@ class SeatLayoutPage extends StatefulWidget {
 class _SeatLayoutPageState extends State<SeatLayoutPage> {
   int? selectedSeat;
   
-  // Seat status: 0 = available, 1 = occupied, 2 = reserved, 3 = accessible
   final Map<int, int> seatStatus = {
-    // Row 1
     1: 3, 2: 1, 3: 0, 4: 1, 5: 0, 6: 0, 7: 1, 8: 1, 9: 1, 10: 0,
-    // Row 2
     11: 1, 12: 1, 13: 1, 14: 0, 15: 1, 16: 0, 17: 1, 18: 0, 19: 1, 20: 0,
-    // Row 3
     21: 3, 22: 1, 23: 1, 24: 1, 25: 1, 26: 0, 27: 1, 28: 1, 29: 1, 30: 1,
-    // Row 4
     31: 1, 32: 1, 33: 0, 34: 0, 35: 0, 36: 0, 37: 1, 38: 0, 39: 1, 40: 0,
-    // Row 5
     41: 3, 42: 1, 43: 0, 44: 1, 45: 0, 46: 0, 47: 1, 48: 1, 49: 1, 50: 2,
-    // Row 6
     51: 0, 52: 0, 53: 0, 54: 1, 55: 0, 56: 1, 57: 0, 58: 0, 59: 0, 60: 0,
   };
 
@@ -45,13 +36,13 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
     }
     
     switch (seatStatus[seatNumber]) {
-      case 0: // Available
+      case 0:
         return Colors.green;
-      case 1: // Occupied
+      case 1:
         return Colors.red;
-      case 2: // Reserved
+      case 2:
         return Colors.blue;
-      case 3: // Accessible
+      case 3:
         return Colors.purple;
       default:
         return Colors.grey;
@@ -59,7 +50,7 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
   }
 
   bool isSeatClickable(int seatNumber) {
-    return seatStatus[seatNumber] == 0; // Only available seats are clickable
+    return seatStatus[seatNumber] == 0;
   }
 
   void onSeatTap(int seatNumber) {
@@ -95,7 +86,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
       ),
       body: Column(
         children: [
-          // Progress indicator
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             color: Colors.white,
@@ -125,7 +115,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
             ),
           ),
 
-          // Info box
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
@@ -147,13 +136,11 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
             ),
           ),
 
-          // Seat map
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // Lecturer Podium
                   Container(
                     margin: const EdgeInsets.only(bottom: 24),
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
@@ -179,7 +166,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                     ),
                   ),
 
-                  // Door (left)
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
@@ -203,7 +189,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                     ),
                   ),
 
-                  // Seats grid (6 rows x 10 columns)
                   ...List.generate(6, (rowIndex) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
@@ -211,7 +196,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(10, (colIndex) {
                           int seatNumber = rowIndex * 10 + colIndex + 1;
-                          bool isAccessible = seatStatus[seatNumber] == 3;
                           
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -247,7 +231,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
 
                   const SizedBox(height: 16),
 
-                  // Door (right)
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
@@ -273,7 +256,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
 
                   const SizedBox(height: 24),
 
-                  // Legend
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -295,7 +277,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
 
                   const SizedBox(height: 24),
 
-                  // Accessibility info
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -363,7 +344,6 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Show confirmation dialog
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
