@@ -25,6 +25,28 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     super.dispose();
   }
 
+  void _autoFillCredentials() {
+    setState(() {
+      _emailController.text = 'student@my.jcu.edu.au';
+      _passwordController.text = 'student123';
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text('Credentials auto-filled!'),
+          ],
+        ),
+        backgroundColor: Color(0xFF1E88E5),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   Future<void> _handleSignIn() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
@@ -278,12 +300,12 @@ class StudentSignInPageState extends State<StudentSignInPage> {
 
                     const SizedBox(height: 16),
 
-                    // Demo credentials info
+                    // Demo credentials info with Auto-Fill button
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: Colors.green.shade200),
                       ),
                       child: Column(
@@ -293,12 +315,14 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                             children: [
                               Icon(Icons.check_circle, color: Colors.green.shade700, size: 20),
                               const SizedBox(width: 8),
-                              const Text(
-                                '✅ MOCK MODE - Ready to Use!',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                  color: Colors.green,
+                              const Expanded(
+                                child: Text(
+                                  '✅ MOCK MODE - Ready to Use!',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.green,
+                                  ),
                                 ),
                               ),
                             ],
@@ -316,7 +340,40 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                             'Email: student@my.jcu.edu.au\nPassword: student123',
                             style: TextStyle(fontSize: 12, fontFamily: 'monospace'),
                           ),
+                          const SizedBox(height: 12),
+                          
+                          // Auto-Fill Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: isLoading ? null : _autoFillCredentials,
+                              icon: Icon(
+                                Icons.auto_awesome,
+                                color: Colors.green.shade700,
+                                size: 20,
+                              ),
+                              label: Text(
+                                'Auto-Fill Student Credentials',
+                                style: TextStyle(
+                                  color: Colors.green.shade700,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: Colors.green.shade400, width: 2),
+                                backgroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          
                           const SizedBox(height: 8),
+                          const Divider(),
+                          const SizedBox(height: 4),
                           const Text(
                             'Or try:\nEmail: lecturer@example.com\nPassword: lecturer123',
                             style: TextStyle(fontSize: 11, color: Colors.grey),
