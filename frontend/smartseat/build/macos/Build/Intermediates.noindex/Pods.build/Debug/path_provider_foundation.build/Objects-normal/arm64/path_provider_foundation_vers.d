@@ -1,0 +1,3 @@
+dependencies: \
+  /Users/winminoo/Documents/CP3405-TR3-2025-P1T2/frontend/smartseat/build/macos/Build/Intermediates.noindex/Pods.build/Debug/path_provider_foundation.build/module.modulemap \
+  /Users/winminoo/Documents/CP3405-TR3-2025-P1T2/frontend/smartseat/build/macos/Build/Intermediates.noindex/Pods.build/Debug/path_provider_foundation.build/DerivedSources/path_provider_foundation_vers.c

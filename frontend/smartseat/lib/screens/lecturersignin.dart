@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class LecturerLoginScreen extends StatefulWidget {
   const LecturerLoginScreen({super.key});
 
@@ -8,28 +7,31 @@ class LecturerLoginScreen extends StatefulWidget {
   State<LecturerLoginScreen> createState() => LecturerLoginScreenState();
 }
 
-
 class LecturerLoginScreenState extends State<LecturerLoginScreen> {
-
   bool rememberMe = false;
   bool obscurePassword = true;
 
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    // final TextEditingController passwordController = TextEditingController();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Blue top section
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF1976D2), Color(0xFF2196F3)],
@@ -40,12 +42,10 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Back button
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back,
-                              color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Text(
@@ -55,8 +55,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                       ],
                     ),
                     const SizedBox(height: 40),
-
-                    // Center logo and heading
                     Center(
                       child: Column(
                         children: [
@@ -85,8 +83,7 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           const SizedBox(height: 8),
                           const Text(
                             'Manage your classroom layouts',
-                            style: TextStyle(
-                                color: Colors.white70, fontSize: 16),
+                            style: TextStyle(color: Colors.white70, fontSize: 16),
                           ),
                         ],
                       ),
@@ -96,16 +93,13 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                 ),
               ),
 
-              // White bottom section
               Container(
                 color: Colors.white,
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Login form card
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -118,15 +112,13 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 25),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
                             'Staff Email Address',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 8),
                           TextField(
@@ -138,59 +130,59 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 16),
                           const Text(
-                      'Password',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      obscureText: obscurePassword,
-                      decoration: InputDecoration(
-                        hintText: 'Enter your password',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                            'Password',
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              obscurePassword = !obscurePassword;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: passwordController,
+                            obscureText: obscurePassword,
+                            decoration: InputDecoration(
+                              hintText: 'Enter your password',
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 14),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    obscurePassword = !obscurePassword;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
 
-                    // Remember me + forgot password
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              rememberMe = value ?? false;
-                            });
-                          },
-                        ),
-                        const Text('Remember me'),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Forgot password?',
-                            style: TextStyle(color: Colors.blueAccent),
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: rememberMe,
+                                onChanged: (value) {
+                                  setState(() {
+                                    rememberMe = value ?? false;
+                                  });
+                                },
+                              ),
+                              const Text('Remember me'),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text(
+                                  'Forgot password?',
+                                  style: TextStyle(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                           const SizedBox(height: 8),
                           SizedBox(
                             width: double.infinity,
@@ -201,13 +193,11 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
                               child: const Text(
                                 'Sign In',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
+                                style: TextStyle(fontSize: 18, color: Colors.white),
                               ),
                             ),
                           ),
@@ -217,14 +207,12 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
 
                     const SizedBox(height: 25),
 
-                    // Secure Access
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFFE3F2FD),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -238,8 +226,7 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                                 Text(
                                   'Secure Access',
                                   style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
+                                      fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                                 SizedBox(height: 4),
                                 Text(
@@ -255,11 +242,9 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Features
                     const Text(
                       'Lecturer Dashboard Features',
-                      style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 10),
                     const Column(
@@ -274,14 +259,12 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Support and footer
                     Center(
                       child: Column(
                         children: [
                           const Text(
                             'Need help accessing your account?',
-                            style:
-                                TextStyle(fontSize: 14, color: Colors.black54),
+                            style: TextStyle(fontSize: 14, color: Colors.black54),
                           ),
                           const SizedBox(height: 6),
                           GestureDetector(
@@ -298,8 +281,7 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           const SizedBox(height: 20),
                           const Text(
                             'By signing in, you agree to the university\'s',
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 13),
+                            style: TextStyle(color: Colors.black54, fontSize: 13),
                           ),
                           const SizedBox(height: 4),
                           GestureDetector(
@@ -328,7 +310,6 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
   }
 }
 
-// Custom bullet item widget
 class FeatureItem extends StatelessWidget {
   final String text;
   const FeatureItem(this.text, {super.key});
