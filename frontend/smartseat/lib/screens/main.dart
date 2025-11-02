@@ -5,7 +5,6 @@ import 'package:smartseat/screens/studentsignin.dart';
 import 'package:smartseat/screens/lecturersignin.dart';
 import 'package:smartseat/screens/adminlogin.dart';
 
-
 Future <void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
@@ -38,57 +37,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   String? selectedRole;
-
-// // test
-
-// class SmartSeatApp extends StatelessWidget {
-//   const SmartSeatApp({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       title: 'Reservations',
-//       home: HomePage(),
-//     );
-//   }
-// }
-
-
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key});
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-// class _HomePageState extends State<HomePage> {
-//   final _future = Supabase.instance.client
-//       .from('Users')
-//       .select();
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: FutureBuilder(
-//         future: _future,
-//         builder: (context, snapshot) {
-//           if (!snapshot.hasData) {
-//             return const Center(child: CircularProgressIndicator());
-//           }
-//           final reservations = snapshot.data!;
-//           return ListView.builder(
-//             itemCount: reservations.length,
-//             itemBuilder: ((context, index) {
-//               final reservation = reservations[index];
-//               return ListTile(
-//                 title: Text(reservation['name']),
-//               );
-//             }),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-// // test ends
-
-
 
   @override
   Widget build(BuildContext context) {
