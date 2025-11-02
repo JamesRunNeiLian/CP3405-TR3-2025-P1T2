@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'package:smartseat/screens/studentsignin.dart';
+import 'package:smartseat/screens/studentSignIn.dart';
 import 'package:smartseat/screens/lecturersignin.dart';
 import 'package:smartseat/screens/adminlogin.dart';
+import 'package:smartseat/services/supabase_service.dart';
 
-
-Future <void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: 'https://vqjtaaejsjovdiotacqe.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxanRhYWVqc2pvdmRpb3RhY3FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4ODkyNTMsImV4cCI6MjA3NzQ2NTI1M30.FpbGZXWULKY4YqREvvaWy7D2BcgyO7RiFURAA6J_2js',
-  );
+  
+  // Initialize Supabase
+  try {
+    await SupabaseService.initialize();
+    print('=== SMARTSEAT STARTED (SUPABASE MODE) ===');
+    print('Supabase initialized successfully!');
+  } catch (e) {
+    print('=== SUPABASE INITIALIZATION ERROR ===');
+    print('Error: $e');
+    print('Falling back to MOCK MODE');
+  }
+  
   runApp(const SmartSeatApp());
 }
 
@@ -22,11 +28,14 @@ class SmartSeatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SmartSeat',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
       home: const WelcomePage(),
       debugShowCheckedModeBanner: false,
     );
- }
+  }
 }
 
 class WelcomePage extends StatefulWidget {
@@ -39,56 +48,29 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   String? selectedRole;
 
-// // test
+  void _navigateToRole() {
+    if (selectedRole == null) return;
 
-// class SmartSeatApp extends StatelessWidget {
-//   const SmartSeatApp({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       title: 'Reservations',
-//       home: HomePage(),
-//     );
-//   }
-// }
+    Widget destination;
+    switch (selectedRole) {
+      case 'student':
+        destination = const StudentSignInPage();
+        break;
+      case 'lecturer':
+        destination = const LecturerLoginScreen();
+        break;
+      case 'admin':
+        destination = const AdminLoginPage();
+        break;
+      default:
+        return;
+    }
 
-
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key});
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-// class _HomePageState extends State<HomePage> {
-//   final _future = Supabase.instance.client
-//       .from('Users')
-//       .select();
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: FutureBuilder(
-//         future: _future,
-//         builder: (context, snapshot) {
-//           if (!snapshot.hasData) {
-//             return const Center(child: CircularProgressIndicator());
-//           }
-//           final reservations = snapshot.data!;
-//           return ListView.builder(
-//             itemCount: reservations.length,
-//             itemBuilder: ((context, index) {
-//               final reservation = reservations[index];
-//               return ListTile(
-//                 title: Text(reservation['name']),
-//               );
-//             }),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-// // test ends
-
-
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => destination),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +118,34 @@ class _WelcomePageState extends State<WelcomePage> {
 
               const SizedBox(height: 32),
 
+              // Supabase Status Banner
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.cloud_done, color: Colors.blue.shade700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Connected to Supabase',
+                        style: TextStyle(
+                          color: Colors.blue.shade900,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
               // Role selection section
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -181,12 +191,8 @@ class _WelcomePageState extends State<WelcomePage> {
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (context) => const AdminLoginPage(),
-                              ),
-                            );
+                        setState(() => selectedRole = 'admin');
+                        _navigateToRole();
                       },
                       child: const Text(
                         "I am an admin",
@@ -236,26 +242,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   vertical: 8,
                 ),
                 child: ElevatedButton(
-                  onPressed: selectedRole != null
-                      ? () {
-                          if (selectedRole == 'student') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (context) => const StudentSignInPage(),
-                              ),
-                            );
-                          }
-                          else if (selectedRole == 'lecturer'){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (context) => const LecturerLoginScreen(),
-                              ),
-                            );
-                          }
-                        }
-                      : null,
+                  onPressed: selectedRole != null ? _navigateToRole : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: selectedRole != null
                         ? Colors.blueAccent
@@ -378,5 +365,3 @@ class BulletText extends StatelessWidget {
 extension StringCasing on String {
   String capitalize() => isEmpty ? this : this[0].toUpperCase() + substring(1);
 }
-
-
