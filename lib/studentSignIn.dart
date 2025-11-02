@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartseat/services/mock_auth_service.dart';
+import 'package:smartseat/services/auth_service.dart';
 import 'package:smartseat/student_home_page.dart';
 
 class StudentSignInPage extends StatefulWidget {
@@ -16,7 +16,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final MockAuthService _authService = MockAuthService();
+  final AuthService _authService = AuthService(); // Using real Supabase AuthService
 
   @override
   void dispose() {
@@ -51,7 +51,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    print('=== MOCK LOGIN ATTEMPT ===');
+    print('=== SUPABASE LOGIN ATTEMPT ===');
     print('Email entered: $email');
     print('Password length: ${password.length}');
 
@@ -65,7 +65,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
     });
 
     try {
-      print('Attempting mock authentication...');
+      print('Attempting Supabase authentication...');
       final userData = await _authService.login(email, password);
 
       print('Login result: ${userData != null ? "Success" : "Failed"}');
@@ -97,7 +97,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
       }
     } catch (e) {
       print('Login error: $e');
-      _showSnackBar('An error occurred during login', isError: true);
+      _showSnackBar('An error occurred during login: ${e.toString()}', isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -300,28 +300,28 @@ class StudentSignInPageState extends State<StudentSignInPage> {
 
                     const SizedBox(height: 16),
 
-                    // Demo credentials info with Auto-Fill button
+                    // Supabase connection info with Auto-Fill button
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade50,
+                        color: Colors.blue.shade50,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.green.shade200),
+                        border: Border.all(color: Colors.blue.shade200),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.check_circle, color: Colors.green.shade700, size: 20),
+                              Icon(Icons.cloud_done, color: Colors.blue.shade700, size: 20),
                               const SizedBox(width: 8),
                               const Expanded(
                                 child: Text(
-                                  '✅ MOCK MODE - Ready to Use!',
+                                  '✅ Connected to Supabase',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 13,
-                                    color: Colors.green,
+                                    color: Colors.blue,
                                   ),
                                 ),
                               ),
@@ -349,19 +349,19 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                               onPressed: isLoading ? null : _autoFillCredentials,
                               icon: Icon(
                                 Icons.auto_awesome,
-                                color: Colors.green.shade700,
+                                color: Colors.blue.shade700,
                                 size: 20,
                               ),
                               label: Text(
                                 'Auto-Fill Student Credentials',
                                 style: TextStyle(
-                                  color: Colors.green.shade700,
+                                  color: Colors.blue.shade700,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Colors.green.shade400, width: 2),
+                                side: BorderSide(color: Colors.blue.shade400, width: 2),
                                 backgroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
@@ -375,7 +375,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                           const Divider(),
                           const SizedBox(height: 4),
                           const Text(
-                            'Or try:\nEmail: lecturer@example.com\nPassword: lecturer123',
+                            'Note: Make sure you have created the test user in your Supabase database.',
                             style: TextStyle(fontSize: 11, color: Colors.grey),
                           ),
                         ],

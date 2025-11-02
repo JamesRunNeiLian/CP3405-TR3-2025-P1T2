@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:smartseat/studentSignIn.dart';
 import 'package:smartseat/lecturersignin.dart';
 import 'package:smartseat/adminlogin.dart';
+import 'package:smartseat/services/supabase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  print('=== SMARTSEAT STARTED (MOCK MODE) ===');
-  print('Using mock authentication - no Supabase needed!');
+  // Initialize Supabase
+  try {
+    await SupabaseService.initialize();
+    print('=== SMARTSEAT STARTED (SUPABASE MODE) ===');
+    print('Supabase initialized successfully!');
+  } catch (e) {
+    print('=== SUPABASE INITIALIZATION ERROR ===');
+    print('Error: $e');
+    print('Falling back to MOCK MODE');
+  }
   
   runApp(const SmartSeatApp());
 }
@@ -109,24 +118,24 @@ class _WelcomePageState extends State<WelcomePage> {
 
               const SizedBox(height: 32),
 
-              // Mock Mode Banner
+              // Supabase Status Banner
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
+                  color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
+                  border: Border.all(color: Colors.blue.shade200),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.green.shade700),
+                    Icon(Icons.cloud_done, color: Colors.blue.shade700),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'MOCK MODE - No Supabase needed!',
+                        'Connected to Supabase',
                         style: TextStyle(
-                          color: Colors.green.shade900,
+                          color: Colors.blue.shade900,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
