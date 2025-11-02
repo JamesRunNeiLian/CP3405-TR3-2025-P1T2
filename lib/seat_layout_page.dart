@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:smartseat/seat_detail_page.dart';
 
 class SeatLayoutPage extends StatefulWidget {
   final String roomNumber;
   final String timeSlot;
+  final String userId;
+  final String userEmail;
+  final String userName;
 
   const SeatLayoutPage({
     super.key,
     required this.roomNumber,
     required this.timeSlot,
+    required this.userId,
+    required this.userEmail,
+    required this.userName,
   });
 
   @override
@@ -396,89 +403,17 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SeatDetailPage(
+                                seatNumber: selectedSeat!,
+                                roomNumber: widget.roomNumber,
+                                timeSlot: widget.timeSlot,
+                                userId: widget.userId,
+                                userEmail: widget.userEmail,
+                                userName: widget.userName,
                               ),
-                              title: Row(
-                                children: const [
-                                  Icon(Icons.check_circle, color: Color(0xFF1E88E5)),
-                                  SizedBox(width: 8),
-                                  Text('Confirm Reservation'),
-                                ],
-                              ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'You are about to reserve:',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _buildInfoRow('Seat', '$selectedSeat'),
-                                  _buildInfoRow('Room', widget.roomNumber),
-                                  _buildInfoRow('Time', widget.timeSlot),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Row(
-                                          children: [
-                                            const Icon(Icons.check_circle, color: Colors.white),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'Seat $selectedSeat reserved successfully!',
-                                            ),
-                                          ],
-                                        ),
-                                        backgroundColor: Colors.green,
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1E88E5),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Confirm',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
                           );
                         },

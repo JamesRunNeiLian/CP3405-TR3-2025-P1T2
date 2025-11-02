@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/seat_layout_page.dart';
+import 'package:smartseat/my_reservations_page.dart';
 
 class StudentHomePage extends StatefulWidget {
   final String userId;
@@ -56,9 +57,23 @@ class _StudentHomePageState extends State<StudentHomePage> {
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+            if (index == 2) {
+              // Navigate to My Reservations page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyReservationsPage(
+                    userId: widget.userId,
+                    userEmail: widget.userEmail,
+                    userName: widget.userName,
+                  ),
+                ),
+              );
+            } else {
+              setState(() {
+                _selectedIndex = index;
+              });
+            }
           },
           type: BottomNavigationBarType.fixed,
           selectedItemColor: const Color(0xFF1E88E5),
@@ -182,9 +197,12 @@ class HomeTabContent extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const SeatLayoutPage(
+                        builder: (context) => SeatLayoutPage(
                           roomNumber: 'C4-14',
                           timeSlot: '2:00 PM - 4:00 PM',
+                          userId: userId,
+                          userEmail: userEmail,
+                          userName: userName,
                         ),
                       ),
                     );
@@ -313,51 +331,27 @@ class HomeTabContent extends StatelessWidget {
                     roomNumber: 'C3-04',
                     availableSeats: '17/30 seats available',
                     icon: Icons.people_outline,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SeatLayoutPage(
-                            roomNumber: 'C3-04',
-                            timeSlot: 'Available Now',
-                          ),
-                        ),
-                      );
-                    },
+                    userId: userId,
+                    userEmail: userEmail,
+                    userName: userName,
                   ),
                   const SizedBox(height: 12),
                   VenueCard(
                     roomNumber: 'C3-05',
                     availableSeats: '18/60 seats available',
                     icon: Icons.people_outline,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SeatLayoutPage(
-                            roomNumber: 'C3-05',
-                            timeSlot: 'Available Now',
-                          ),
-                        ),
-                      );
-                    },
+                    userId: userId,
+                    userEmail: userEmail,
+                    userName: userName,
                   ),
                   const SizedBox(height: 12),
                   VenueCard(
                     roomNumber: 'C3-06',
                     availableSeats: '55/100 seats available',
                     icon: Icons.people_outline,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SeatLayoutPage(
-                            roomNumber: 'C3-06',
-                            timeSlot: 'Available Now',
-                          ),
-                        ),
-                      );
-                    },
+                    userId: userId,
+                    userEmail: userEmail,
+                    userName: userName,
                   ),
                 ],
               ),
@@ -408,20 +402,37 @@ class VenueCard extends StatelessWidget {
   final String roomNumber;
   final String availableSeats;
   final IconData icon;
-  final VoidCallback onTap;
+  final String userId;
+  final String userEmail;
+  final String userName;
 
   const VenueCard({
     super.key,
     required this.roomNumber,
     required this.availableSeats,
     required this.icon,
-    required this.onTap,
+    required this.userId,
+    required this.userEmail,
+    required this.userName,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SeatLayoutPage(
+              roomNumber: roomNumber,
+              timeSlot: 'Available Now',
+              userId: userId,
+              userEmail: userEmail,
+              userName: userName,
+            ),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
