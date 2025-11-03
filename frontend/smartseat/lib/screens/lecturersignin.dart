@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartseat/services/auth_service.dart';
 
 class LecturerLoginScreen extends StatefulWidget {
   const LecturerLoginScreen({super.key});
@@ -10,15 +11,116 @@ class LecturerLoginScreen extends StatefulWidget {
 class LecturerLoginScreenState extends State<LecturerLoginScreen> {
   bool rememberMe = false;
   bool obscurePassword = true;
+  bool isLoading = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void _autoFillCredentials() {
+    setState(() {
+      emailController.text = 'lecturer@example.com';
+      passwordController.text = 'lecturer123';
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text('Credentials auto-filled!'),
+          ],
+        ),
+        backgroundColor: Color(0xFF1E88E5),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _handleSignIn() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    print('=== LECTURER LOGIN ATTEMPT ===');
+    print('Email entered: $email');
+    print('Password length: ${password.length}');
+
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackBar('Please enter email and password', isError: true);
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      print('Attempting Supabase authentication...');
+      final userData = await _authService.login(email, password);
+
+      print('Login result: ${userData != null ? "Success" : "Failed"}');
+      
+      if (userData != null) {
+        print('User role: ${userData['role']}');
+        print('User email: ${userData['email']}');
+        
+        if (userData['role'] == 'lecturer') {
+          _showSnackBar('Login successful! Welcome ${userData['full_name'] ?? email}');
+          
+          // TODO: Navigate to lecturer home page when available
+          // For now, just show success message
+          if (mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Login Successful'),
+                content: Text('Welcome, ${userData['full_name'] ?? 'Lecturer'}!\n\nLecturer dashboard coming soon.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        } else {
+          _showSnackBar('Please use the correct portal for your role (${userData['role']})', isError: true);
+        }
+      } else {
+        _showSnackBar('Invalid email or password', isError: true);
+      }
+    } catch (e) {
+      print('Login error: $e');
+      _showSnackBar('An error occurred during login: ${e.toString()}', isError: true);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -123,6 +225,8 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           const SizedBox(height: 8),
                           TextField(
                             controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            enabled: !isLoading,
                             decoration: InputDecoration(
                               hintText: 'Lecturer ID',
                               border: OutlineInputBorder(
@@ -139,6 +243,8 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           TextField(
                             controller: passwordController,
                             obscureText: obscurePassword,
+                            enabled: !isLoading,
+                            onSubmitted: (_) => _handleSignIn(),
                             decoration: InputDecoration(
                               hintText: 'Enter your password',
                               contentPadding: const EdgeInsets.symmetric(
@@ -166,7 +272,7 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                             children: [
                               Checkbox(
                                 value: rememberMe,
-                                onChanged: (value) {
+                                onChanged: isLoading ? null : (value) {
                                   setState(() {
                                     rememberMe = value ?? false;
                                   });
@@ -175,7 +281,9 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                               const Text('Remember me'),
                               const Spacer(),
                               TextButton(
-                                onPressed: () {},
+                                onPressed: isLoading ? null : () {
+                                  _showSnackBar('Password reset feature coming soon!');
+                                },
                                 child: const Text(
                                   'Forgot password?',
                                   style: TextStyle(color: Colors.blueAccent),
@@ -187,7 +295,7 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: isLoading ? null : _handleSignIn,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF1E88E5),
                                 shape: RoundedRectangleBorder(
@@ -195,11 +303,104 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
                                 ),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
-                              child: const Text(
-                                'Sign In',
-                                style: TextStyle(fontSize: 18, color: Colors.white),
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Sign In',
+                                      style: TextStyle(fontSize: 18, color: Colors.white),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // Supabase connection info with Auto-Fill button
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue.shade200),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.cloud_done, color: Colors.blue.shade700, size: 20),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  '✅ Connected to Supabase',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Test Credentials:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Email: lecturer@example.com\nPassword: lecturer123',
+                            style: TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                          ),
+                          const SizedBox(height: 12),
+                          
+                          // Auto-Fill Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: isLoading ? null : _autoFillCredentials,
+                              icon: Icon(
+                                Icons.auto_awesome,
+                                color: Colors.blue.shade700,
+                                size: 20,
+                              ),
+                              label: Text(
+                                'Auto-Fill Lecturer Credentials',
+                                style: TextStyle(
+                                  color: Colors.blue.shade700,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: Colors.blue.shade400, width: 2),
+                                backgroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                             ),
+                          ),
+                          
+                          const SizedBox(height: 8),
+                          const Divider(),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Note: Make sure you have created the test user in your Supabase database.',
+                            style: TextStyle(fontSize: 11, color: Colors.grey),
                           ),
                         ],
                       ),
