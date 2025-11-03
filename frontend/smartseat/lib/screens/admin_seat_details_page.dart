@@ -1,5 +1,6 @@
 // frontend/smartseat/lib/screens/admin_seat_details_page.dart
 import 'package:flutter/material.dart';
+import 'student_seat_profile_page.dart';
 
 class AdminSeatDetailsPage extends StatefulWidget {
   final String roomNumber;
@@ -62,6 +63,21 @@ class _AdminSeatDetailsPageState extends State<AdminSeatDetailsPage> {
         return Colors.purple; // Accessible
       default:
         return Colors.grey;
+    }
+  }
+
+  void _onSeatTap(int seatNumber) {
+    // Only navigate if seat 55 is tapped
+    if (seatNumber == 55) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StudentSeatProfilePage(
+            seatNumber: seatNumber,
+            roomNumber: widget.roomNumber,
+          ),
+        ),
+      );
     }
   }
 
@@ -233,6 +249,35 @@ class _AdminSeatDetailsPageState extends State<AdminSeatDetailsPage> {
 
             const SizedBox(height: 16),
 
+            // Instruction banner
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue[200]!),
+              ),
+              child: Row(
+                children: const [
+                  Icon(Icons.info_outline, color: Color(0xFF1976F3)),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Tap on Seat 55 to view student details',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF1976F3),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
             // Seat Grid
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -252,20 +297,29 @@ class _AdminSeatDetailsPageState extends State<AdminSeatDetailsPage> {
                         
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 3),
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: getSeatColor(seatNumber),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Center(
-                              child: Text(
-                                seatNumber.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
+                          child: GestureDetector(
+                            onTap: () => _onSeatTap(seatNumber),
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: getSeatColor(seatNumber),
+                                borderRadius: BorderRadius.circular(6),
+                                border: seatNumber == 55
+                                    ? Border.all(
+                                        color: Colors.blue[700]!,
+                                        width: 2,
+                                      )
+                                    : null,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  seatNumber.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
