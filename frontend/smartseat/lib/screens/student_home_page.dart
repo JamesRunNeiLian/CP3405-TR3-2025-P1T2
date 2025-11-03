@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/screens/seat_layout_page.dart';
+import 'package:smartseat/screens/seat_layout_page_c3_04.dart';
 import 'package:smartseat/screens/my_reservations_page.dart';
+import 'package:smartseat/screens/student_profile_page.dart';
 
 class StudentHomePage extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String studentId;
+  final String program;
 
   const StudentHomePage({
     super.key,
     required this.userId,
     required this.userEmail,
     required this.userName,
+    this.studentId = '',
+    this.program = 'Bachelor of Information Technology',
   });
 
   @override
@@ -31,10 +37,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
         userId: widget.userId,
         userEmail: widget.userEmail,
         userName: widget.userName,
+        studentId: widget.studentId,
+        program: widget.program,
       ),
-      const ScheduleTabContent(),
-      const MySeatsTabContent(),
-      const StatsTabContent(),
     ];
   }
 
@@ -57,7 +62,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: (index) {
-            if (index == 2) {
+            if (index == 1) {
               // Navigate to My Reservations page
               Navigator.push(
                 context,
@@ -89,19 +94,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
               label: 'Find',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_today),
-              label: 'Schedule',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.event_seat_outlined),
               activeIcon: Icon(Icons.event_seat),
               label: 'My Seats',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_outlined),
-              activeIcon: Icon(Icons.bar_chart),
-              label: 'Stats',
             ),
           ],
         ),
@@ -114,12 +109,16 @@ class HomeTabContent extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String studentId;
+  final String program;
 
   const HomeTabContent({
     super.key,
     required this.userId,
     required this.userEmail,
     required this.userName,
+    this.studentId = '',
+    this.program = 'Bachelor of Information Technology',
   });
 
   @override
@@ -170,15 +169,31 @@ class HomeTabContent extends StatelessWidget {
                           ],
                         ),
                       ),
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white.withOpacity(0.3),
-                        child: Text(
-                          displayName[0].toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudentProfilePage(
+                                userId: userId,
+                                userEmail: userEmail,
+                                userName: userName,
+                                studentId: studentId,
+                                program: program,
+                              ),
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.white.withOpacity(0.3),
+                          child: Text(
+                            displayName[0].toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -420,17 +435,29 @@ class VenueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // Navigate to the appropriate layout based on room number
+        Widget destination;
+        if (roomNumber == 'C3-04') {
+          destination = SeatLayoutPageC304(
+            roomNumber: roomNumber,
+            timeSlot: 'Available Now',
+            userId: userId,
+            userEmail: userEmail,
+            userName: userName,
+          );
+        } else {
+          destination = SeatLayoutPage(
+            roomNumber: roomNumber,
+            timeSlot: 'Available Now',
+            userId: userId,
+            userEmail: userEmail,
+            userName: userName,
+          );
+        }
+        
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => SeatLayoutPage(
-              roomNumber: roomNumber,
-              timeSlot: 'Available Now',
-              userId: userId,
-              userEmail: userEmail,
-              userName: userName,
-            ),
-          ),
+          MaterialPageRoute(builder: (context) => destination),
         );
       },
       child: Container(
@@ -490,48 +517,6 @@ class VenueCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ScheduleTabContent extends StatelessWidget {
-  const ScheduleTabContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Schedule',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class MySeatsTabContent extends StatelessWidget {
-  const MySeatsTabContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'My Seats',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class StatsTabContent extends StatelessWidget {
-  const StatsTabContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Stats',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }
