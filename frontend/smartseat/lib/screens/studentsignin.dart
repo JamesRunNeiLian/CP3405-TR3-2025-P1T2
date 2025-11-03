@@ -75,7 +75,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
         print('User email: ${userData['email']}');
         
         if (userData['role'] == 'student') {
-          _showSnackBar('Login successful! Welcome ${userData['full_name'] ?? email}');
+          _showSnackBar('Login successful! Welcome ${userData['name'] ?? email}');
           
           if (mounted) {
             Navigator.pushReplacement(
@@ -84,7 +84,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                 builder: (context) => StudentHomePage(
                   userId: userData['id'].toString(),
                   userEmail: userData['email'].toString(),
-                  userName: userData['full_name']?.toString() ?? 'Student',
+                  userName: userData['name']?.toString() ?? 'Student',
                 ),
               ),
             );
