@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/services/auth_service.dart';
+import 'package:smartseat/screens/lecturer_home_page.dart';
 
 class LecturerLoginScreen extends StatefulWidget {
   const LecturerLoginScreen({super.key});
@@ -76,20 +77,15 @@ class LecturerLoginScreenState extends State<LecturerLoginScreen> {
         if (userData['role'] == 'lecturer') {
           _showSnackBar('Login successful! Welcome ${userData['full_name'] ?? email}');
           
-          // TODO: Navigate to lecturer home page when available
-          // For now, just show success message
           if (mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('Login Successful'),
-                content: Text('Welcome, ${userData['full_name'] ?? 'Lecturer'}!\n\nLecturer dashboard coming soon.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
-                  ),
-                ],
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LecturerHomePage(
+                  userId: userData['id'].toString(),
+                  userEmail: userData['email'].toString(),
+                  userName: userData['full_name']?.toString() ?? 'Lecturer',
+                ),
               ),
             );
           }
