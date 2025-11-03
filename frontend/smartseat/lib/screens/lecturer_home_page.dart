@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/screens/view_seats_page.dart';
 import 'package:smartseat/screens/lecturer_room_selection_page.dart';
+import 'package:smartseat/screens/lecturer_profile_page.dart';
 
 class LecturerHomePage extends StatelessWidget {
   final String userId;
@@ -16,10 +17,18 @@ class LecturerHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extract first name from full name
-    String displayName = userName.isNotEmpty ? userName.split(' ').first : 'Lecturer';
-    // Get first letter for avatar
-    String firstLetter = userName.isNotEmpty ? userName[0].toUpperCase() : 'L';
+    // Get initials for avatar
+    String initials = '';
+    if (userName.isNotEmpty) {
+      List<String> nameParts = userName.split(' ');
+      if (nameParts.length >= 2) {
+        initials = nameParts[0][0].toUpperCase() + nameParts[1][0].toUpperCase();
+      } else {
+        initials = nameParts[0][0].toUpperCase();
+      }
+    } else {
+      initials = 'L';
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -39,14 +48,31 @@ class LecturerHomePage extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               child: Row(
                 children: [
-                  // Profile Avatar
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      color: const Color(0xFF1E88E5),
-                      size: 32,
+                  // Profile Avatar - clickable
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LecturerProfilePage(
+                            userId: userId,
+                            userEmail: userEmail,
+                            userName: userName,
+                          ),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        initials,
+                        style: const TextStyle(
+                          color: Color(0xFF1E88E5),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
