@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartseat/screens/seat_layout_page.dart';
+import 'package:smartseat/screens/lecturer_seat_layout_view_page.dart';
 
 class ViewSeatsPage extends StatelessWidget {
   final String userId;
@@ -15,6 +15,8 @@ class ViewSeatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String displayName = userName.isNotEmpty ? userName.split(' ').first : 'Lecturer';
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -543,13 +545,12 @@ class ViewSeatsPage extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      // Navigate to seat layout page
+                      // Navigate to lecturer seat layout view page
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SeatLayoutPage(
+                          builder: (context) => LecturerSeatLayoutViewPage(
                             roomNumber: room,
-                            timeSlot: timeSlot,
                             userId: userId,
                             userEmail: userEmail,
                             userName: userName,
