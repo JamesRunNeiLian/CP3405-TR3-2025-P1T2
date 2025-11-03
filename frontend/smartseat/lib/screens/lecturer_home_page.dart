@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/screens/view_seats_page.dart';
+import 'package:smartseat/screens/lecturer_room_selection_page.dart';
 
 class LecturerHomePage extends StatelessWidget {
   final String userId;
@@ -134,10 +135,14 @@ class LecturerHomePage extends StatelessWidget {
                         backgroundColor: Colors.white,
                         textColor: Colors.black87,
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Book a Room feature coming soon!'),
-                              behavior: SnackBarBehavior.floating,
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LecturerRoomSelectionPage(
+                                userId: userId,
+                                userEmail: userEmail,
+                                userName: userName,
+                              ),
                             ),
                           );
                         },
