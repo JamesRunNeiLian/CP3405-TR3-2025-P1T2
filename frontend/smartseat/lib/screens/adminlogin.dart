@@ -1,4 +1,7 @@
+// frontend/smartseat/lib/screens/adminlogin.dart
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'admin_dashboard_page.dart';
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -10,15 +13,111 @@ class AdminLoginPage extends StatefulWidget {
 class AdminLoginPageState extends State<AdminLoginPage> {
   bool rememberMe = false;
   bool obscurePassword = true;
+  bool isLoading = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void _autoFillCredentials() {
+    setState(() {
+      emailController.text = 'admin@example.com';
+      passwordController.text = 'admin123';
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text('Credentials auto-filled!'),
+          ],
+        ),
+        backgroundColor: Color(0xFF1976F3),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _handleSignIn() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    print('=== ADMIN LOGIN ATTEMPT ===');
+    print('Email entered: $email');
+    print('Password length: ${password.length}');
+
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackBar('Please enter email and password', isError: true);
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      print('Attempting Supabase authentication...');
+      final userData = await _authService.login(email, password);
+
+      print('Login result: ${userData != null ? "Success" : "Failed"}');
+      
+      if (userData != null) {
+        print('User role: ${userData['role']}');
+        print('User email: ${userData['email']}');
+        
+        if (userData['role'] == 'admin') {
+          _showSnackBar('Login successful! Welcome ${userData['full_name'] ?? email}');
+          
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdminDashboardPage(
+                  userId: userData['id'].toString(),
+                  userEmail: userData['email'].toString(),
+                  userName: userData['full_name']?.toString() ?? 'Administrator',
+                ),
+              ),
+            );
+          }
+        } else {
+          _showSnackBar('Please use the correct portal for your role (${userData['role']})', isError: true);
+        }
+      } else {
+        _showSnackBar('Invalid email or password', isError: true);
+      }
+    } catch (e) {
+      print('Login error: $e');
+      _showSnackBar('An error occurred during login: ${e.toString()}', isError: true);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -66,7 +165,7 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.group, size: 40, color: Color(0xFF1976F3)),
+                          child: const Icon(Icons.admin_panel_settings, size: 40, color: Color(0xFF1976F3)),
                         ),
                         const SizedBox(height: 16),
                         const Text(
@@ -121,6 +220,7 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                         const SizedBox(height: 8),
                         TextField(
                           controller: emailController,
+                          enabled: !isLoading,
                           decoration: InputDecoration(
                             hintText: "Enter your administrator account info",
                             filled: true,
@@ -141,6 +241,8 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                         TextField(
                           controller: passwordController,
                           obscureText: obscurePassword,
+                          enabled: !isLoading,
+                          onSubmitted: (_) => _handleSignIn(),
                           decoration: InputDecoration(
                             hintText: 'Enter your password',
                             contentPadding: const EdgeInsets.symmetric(
@@ -168,7 +270,7 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                           children: [
                             Checkbox(
                               value: rememberMe,
-                              onChanged: (value) {
+                              onChanged: isLoading ? null : (value) {
                                 setState(() {
                                   rememberMe = value ?? false;
                                 });
@@ -177,7 +279,9 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                             const Text('Remember me'),
                             const Spacer(),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: isLoading ? null : () {
+                                _showSnackBar('Password reset feature coming soon!');
+                              },
                               child: const Text(
                                 'Forgot password?',
                                 style: TextStyle(color: Colors.blueAccent),
@@ -190,7 +294,7 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: isLoading ? null : _handleSignIn,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1976F3),
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -198,11 +302,104 @@ class AdminLoginPageState extends State<AdminLoginPage> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
-                              "Sign In",
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            child: isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    "Sign In",
+                                    style: TextStyle(fontSize: 18, color: Colors.white),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Supabase connection info with Auto-Fill button
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.cloud_done, color: Colors.blue.shade700, size: 20),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                '✅ Connected to Supabase',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Test Credentials:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Email: admin@example.com\nPassword: admin123',
+                          style: TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                        ),
+                        const SizedBox(height: 12),
+                        
+                        // Auto-Fill Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: isLoading ? null : _autoFillCredentials,
+                            icon: Icon(
+                              Icons.auto_awesome,
+                              color: Colors.blue.shade700,
+                              size: 20,
+                            ),
+                            label: Text(
+                              'Auto-Fill Admin Credentials',
+                              style: TextStyle(
+                                color: Colors.blue.shade700,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.blue.shade400, width: 2),
+                              backgroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
+                        ),
+                        
+                        const SizedBox(height: 8),
+                        const Divider(),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Note: Make sure you have created the test user in your Supabase database.',
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
                         ),
                       ],
                     ),
