@@ -1,13 +1,13 @@
-// frontend/smartseat/lib/screens/lecturer_seat_layout_page_3.dart
+// frontend/smartseat/lib/screens/lecturer_seat_layout_view2.dart
 import 'package:flutter/material.dart';
 
-class LecturerSeatLayoutPage3 extends StatefulWidget {
+class LecturerSeatLayoutView2 extends StatefulWidget {
   final String roomNumber;
   final String userId;
   final String userEmail;
   final String userName;
 
-  const LecturerSeatLayoutPage3({
+  const LecturerSeatLayoutView2({
     super.key,
     required this.roomNumber,
     required this.userId,
@@ -16,10 +16,10 @@ class LecturerSeatLayoutPage3 extends StatefulWidget {
   });
 
   @override
-  State<LecturerSeatLayoutPage3> createState() => _LecturerSeatLayoutPage3State();
+  State<LecturerSeatLayoutView2> createState() => _LecturerSeatLayoutView2State();
 }
 
-class _LecturerSeatLayoutPage3State extends State<LecturerSeatLayoutPage3> {
+class _LecturerSeatLayoutView2State extends State<LecturerSeatLayoutView2> {
   int? selectedSeat;
 
   // Seat status: 0 = Available, 1 = Occupied, 2 = Reserved, 3 = Accessible
