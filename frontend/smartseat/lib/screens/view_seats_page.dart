@@ -1,5 +1,7 @@
+// frontend/smartseat/lib/screens/view_seats_page.dart
 import 'package:flutter/material.dart';
 import 'package:smartseat/screens/lecturer_seat_layout_view_page.dart';
+import 'package:smartseat/screens/lecturer_seat_layout_view2.dart';
 
 class ViewSeatsPage extends StatelessWidget {
   final String userId;
@@ -164,15 +166,15 @@ class ViewSeatsPage extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    // Class cards
+                    // Class cards - C3-04 uses the new Page 3 layout
                     _buildClassCard(
                       context: context,
                       room: 'C3-04',
                       timeLabel: 'Today',
                       timeSlot: '09:00 - 11:00',
                       bookings: 28,
-                      capacity: 40,
-                      progress: 28 / 40,
+                      capacity: 30,
+                      progress: 28 / 30,
                     ),
                     const SizedBox(height: 12),
 
@@ -189,12 +191,12 @@ class ViewSeatsPage extends StatelessWidget {
 
                     _buildClassCard(
                       context: context,
-                      room: 'C3-04',
+                      room: 'C3-05',
                       timeLabel: 'Tomorrow',
                       timeSlot: '09:00 - 11:00',
                       bookings: 12,
-                      capacity: 40,
-                      progress: 12 / 40,
+                      capacity: 60,
+                      progress: 12 / 60,
                     ),
 
                     const SizedBox(height: 24),
@@ -545,18 +547,34 @@ class ViewSeatsPage extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      // Navigate to lecturer seat layout view page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LecturerSeatLayoutViewPage(
-                            roomNumber: room,
-                            userId: userId,
-                            userEmail: userEmail,
-                            userName: userName,
+                      // Navigate to the appropriate layout page based on room
+                      if (room == 'C3-04') {
+                        // Use the new table layout for C3-04
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LecturerSeatLayoutView2(
+                              roomNumber: room,
+                              userId: userId,
+                              userEmail: userEmail,
+                              userName: userName,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        // Use the standard layout for other rooms
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LecturerSeatLayoutViewPage(
+                              roomNumber: room,
+                              userId: userId,
+                              userEmail: userEmail,
+                              userName: userName,
+                            ),
+                          ),
+                        );
+                      }
                     },
                     icon: const Icon(Icons.visibility, size: 18),
                     label: const Text('View Layout'),
