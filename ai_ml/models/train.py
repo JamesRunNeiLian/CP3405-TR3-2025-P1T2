@@ -1,31 +1,61 @@
 # train.py
 # This script is responsible for training the model and saving it.
 
+import sys
+import os
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
 import pickle
 
+# Add parent directory to path
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+from supabase import create_client, Client
+from config.supabase_config import SUPABASE_URL, SUPABASE_KEY
+
 print("--- Starting Model Training Script ---")
 
-# --- 1. Mock Data Generation ---
-# This section is the same as before, generating our training data.
-print("Step 1: Generating mock training data...")
-date_rng = pd.date_range(start='2025/09/22', end='2025/12/14', freq='H')
-data = pd.DataFrame(date_rng, columns=['time'])
-data.set_index('time', inplace=True)
+# --- 1. Fetch Training Data from Supabase ---
+print("Step 1: Connecting to Supabase...")
+try:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print("✓ Connected to Supabase")
+except Exception as e:
+    print(f"✗ Error connecting to Supabase: {e}")
+    sys.exit(1)
 
-baseline_occupancy = np.sin(np.linspace(0, 2 * np.pi * 84, len(data))) * 25 + 50
-weekday_multiplier = np.where(data.index.dayofweek < 5, 1.2, 0.4)
-data['occupancy_percentage'] = baseline_occupancy * weekday_multiplier + np.random.randn(len(data)) * 3
-data['occupancy_percentage'] = np.clip(data['occupancy_percentage'], 0, 100)
-print("Mock data generated successfully.")
+print("\nStep 2: Fetching occupancy history data...")
+try:
+    response = supabase.table('occupancy_history')\
+        .select('*')\
+        .order('timestamp', desc=False)\
+        .execute()
+    
+    if not response.data or len(response.data) == 0:
+        print("✗ No occupancy data found in Supabase")
+        print("   Please run: python3 generate_occupancy_data.py")
+        sys.exit(1)
+    
+    # Convert to DataFrame
+    data = pd.DataFrame(response.data)
+    data['timestamp'] = pd.to_datetime(data['timestamp'])
+    data.set_index('timestamp', inplace=True)
+    data = data.sort_index()
+    
+    print(f"✓ Fetched {len(data)} occupancy records from Supabase")
+    print(f"  Date range: {data.index.min()} to {data.index.max()}")
+    print(f"  Occupancy range: {data['occupancy_percentage'].min():.2f}% to {data['occupancy_percentage'].max():.2f}%")
+    
+except Exception as e:
+    print(f"✗ Error fetching data: {e}")
+    print("   Make sure the occupancy_history table exists in Supabase")
+    sys.exit(1)
 
 
 # --- 2. Model Training ---
 # We train the ARIMA model on the entire dataset.
-# [cite_start]This model choice is based on the project brief's suggestion for forecasting[cite: 38].
-print("Step 2: Training the ARIMA model...")
+print("\nStep 3: Training the ARIMA model...")
 # Using common parameters for a baseline model
 model = ARIMA(data['occupancy_percentage'], order=(5, 1, 0))
 model_fit = model.fit()
@@ -37,6 +67,6 @@ print(model_fit.summary())
 # We use the 'pickle' library to serialize our trained model and save it to a file.
 # This file can then be loaded by our API later without needing to retrain.
 model_filename = 'arima_model.pkl'
-print(f"Step 3: Saving the trained model to '{model_filename}'...")
+print(f"\nStep 4: Saving the trained model to '{model_filename}'...")
 with open(model_filename, 'wb') as file:
     pickle.dump(model_fit, file)

@@ -28,7 +28,7 @@ def test_get_recommendation():
     print_section("2. Get Recommendation")
     
     payload = {
-        "user_id": "test_user_001",
+        "user_id": "1",
         "classroom_id": "library_L1"
     }
     
@@ -51,8 +51,8 @@ def test_submit_feedback(strategy_id, accepted):
     payload = {
         "strategy_id": strategy_id,
         "accepted": accepted,
-        "user_id": "test_user_001",
-        "seat_id": "test_seat_A01"
+        "user_id": "1",
+        "seat_id": "2"
     }
     
     response = requests.post(
@@ -111,7 +111,7 @@ def run_learning_demo():
             json={
                 "strategy_id": 0,
                 "accepted": True,
-                "user_id": f"test_user_{i:03d}"
+                "user_id": str(i + 1)
             }
         )
         print(f"  Feedback {i+1}/10 submitted")
