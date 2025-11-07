@@ -7,6 +7,7 @@ class SeatLayoutPageC304 extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String userJCUID;
 
   const SeatLayoutPageC304({
     super.key,
@@ -15,6 +16,7 @@ class SeatLayoutPageC304 extends StatefulWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
+    required this.userJCUID,
   });
 
   @override
@@ -470,6 +472,7 @@ class _SeatLayoutPageC304State extends State<SeatLayoutPageC304> {
                                 userId: widget.userId,
                                 userEmail: widget.userEmail,
                                 userName: widget.userName,
+                                userJCUID: widget.userJCUID,
                               ),
                             ),
                           );

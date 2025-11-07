@@ -5,7 +5,7 @@ class StudentProfilePage extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
-  final String studentId;
+  final String userJCUID;
   final String program;
 
   const StudentProfilePage({
@@ -13,7 +13,7 @@ class StudentProfilePage extends StatelessWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
-    this.studentId = '',
+    required this.userJCUID,
     this.program = 'Bachelor of Information Technology',
   });
 
@@ -125,7 +125,7 @@ class StudentProfilePage extends StatelessWidget {
                           icon: Icons.badge_outlined,
                           iconColor: Colors.purple,
                           title: 'Student ID',
-                          value: studentId.isNotEmpty ? studentId : 'N/A',
+                          value: userJCUID.isNotEmpty ? userJCUID : 'N/A',
                           showDivider: true,
                         ),
                         _buildInfoItem(

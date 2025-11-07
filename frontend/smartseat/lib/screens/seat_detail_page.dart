@@ -8,6 +8,7 @@ class SeatDetailPage extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String userJCUID;
 
   const SeatDetailPage({
     super.key,
@@ -17,6 +18,7 @@ class SeatDetailPage extends StatelessWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
+    required this.userJCUID,
   });
 
   @override
@@ -369,6 +371,7 @@ class SeatDetailPage extends StatelessWidget {
                     userId: userId,
                     userEmail: userEmail,
                     userName: userName,
+                    userJCUID: userJCUID,
                   ),
                 ),
               );

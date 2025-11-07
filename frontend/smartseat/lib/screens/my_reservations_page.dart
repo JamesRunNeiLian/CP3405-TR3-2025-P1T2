@@ -5,12 +5,14 @@ class MyReservationsPage extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String userJCUID;
 
   const MyReservationsPage({
     super.key,
     required this.userId,
     required this.userEmail,
     required this.userName,
+    required this.userJCUID,
   });
 
   @override
@@ -288,6 +290,7 @@ class _MyReservationsPageState extends State<MyReservationsPage> {
                                   userId: widget.userId,
                                   userEmail: widget.userEmail,
                                   userName: widget.userName,
+                                  userJCUID: widget.userJCUID,
                                 ),
                               ),
                               (route) => false,

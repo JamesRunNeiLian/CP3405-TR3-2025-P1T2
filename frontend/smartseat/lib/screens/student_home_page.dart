@@ -8,7 +8,7 @@ class StudentHomePage extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
-  final String studentId;
+  final String userJCUID;
   final String program;
 
   const StudentHomePage({
@@ -16,7 +16,7 @@ class StudentHomePage extends StatefulWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
-    this.studentId = '',
+    required this.userJCUID,
     this.program = 'Bachelor of Information Technology',
   });
 
@@ -37,7 +37,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
         userId: widget.userId,
         userEmail: widget.userEmail,
         userName: widget.userName,
-        studentId: widget.studentId,
+        userJCUID: widget.userJCUID,
         program: widget.program,
       ),
     ];
@@ -71,6 +71,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     userId: widget.userId,
                     userEmail: widget.userEmail,
                     userName: widget.userName,
+                    userJCUID: widget.userJCUID,
                   ),
                 ),
               );
@@ -109,7 +110,7 @@ class HomeTabContent extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
-  final String studentId;
+  final String userJCUID;
   final String program;
 
   const HomeTabContent({
@@ -117,7 +118,7 @@ class HomeTabContent extends StatelessWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
-    this.studentId = '',
+    required this.userJCUID,
     this.program = 'Bachelor of Information Technology',
   });
 
@@ -178,7 +179,7 @@ class HomeTabContent extends StatelessWidget {
                                 userId: userId,
                                 userEmail: userEmail,
                                 userName: userName,
-                                studentId: studentId,
+                                userJCUID: userJCUID,
                                 program: program,
                               ),
                             ),
@@ -218,6 +219,7 @@ class HomeTabContent extends StatelessWidget {
                           userId: userId,
                           userEmail: userEmail,
                           userName: userName,
+                          userJCUID: userJCUID,
                         ),
                       ),
                     );
@@ -349,6 +351,7 @@ class HomeTabContent extends StatelessWidget {
                     userId: userId,
                     userEmail: userEmail,
                     userName: userName,
+                    userJCUID: userJCUID,
                   ),
                   const SizedBox(height: 12),
                   VenueCard(
@@ -358,6 +361,8 @@ class HomeTabContent extends StatelessWidget {
                     userId: userId,
                     userEmail: userEmail,
                     userName: userName,
+                    userJCUID: userJCUID,
+
                   ),
                   const SizedBox(height: 12),
                   VenueCard(
@@ -367,6 +372,8 @@ class HomeTabContent extends StatelessWidget {
                     userId: userId,
                     userEmail: userEmail,
                     userName: userName,
+                    userJCUID: userJCUID,
+
                   ),
                 ],
               ),
@@ -420,6 +427,7 @@ class VenueCard extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String userJCUID;
 
   const VenueCard({
     super.key,
@@ -429,6 +437,8 @@ class VenueCard extends StatelessWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
+    required this.userJCUID,
+    
   });
 
   @override
@@ -444,6 +454,7 @@ class VenueCard extends StatelessWidget {
             userId: userId,
             userEmail: userEmail,
             userName: userName,
+            userJCUID: userJCUID,
           );
         } else {
           destination = SeatLayoutPage(
@@ -452,6 +463,8 @@ class VenueCard extends StatelessWidget {
             userId: userId,
             userEmail: userEmail,
             userName: userName,
+            userJCUID: userJCUID,
+
           );
         }
         

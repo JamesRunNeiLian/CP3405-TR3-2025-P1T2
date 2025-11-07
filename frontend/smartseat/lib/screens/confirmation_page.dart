@@ -9,6 +9,7 @@ class ConfirmationPage extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String userJCUID;
 
   const ConfirmationPage({
     super.key,
@@ -18,6 +19,7 @@ class ConfirmationPage extends StatelessWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
+    required this.userJCUID,
   });
 
   @override
@@ -317,6 +319,7 @@ class ConfirmationPage extends StatelessWidget {
                               userId: userId,
                               userEmail: userEmail,
                               userName: userName,
+                              userJCUID: userJCUID,
                             ),
                           ),
                           (route) => false, // Remove all previous routes
@@ -353,6 +356,7 @@ class ConfirmationPage extends StatelessWidget {
                               userId: userId,
                               userEmail: userEmail,
                               userName: userName,
+                              userJCUID: userJCUID,
                             ),
                           ),
                         );

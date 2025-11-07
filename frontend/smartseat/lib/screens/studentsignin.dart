@@ -85,6 +85,7 @@ class StudentSignInPageState extends State<StudentSignInPage> {
                   userId: userData['id'].toString(),
                   userEmail: userData['email'].toString(),
                   userName: userData['name']?.toString() ?? 'Student',
+                  userJCUID: userData['JCUID'].toString(),
                 ),
               ),
             );
