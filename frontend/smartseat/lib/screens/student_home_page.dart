@@ -3,6 +3,7 @@ import 'package:smartseat/screens/seat_layout_page.dart';
 import 'package:smartseat/screens/seat_layout_page_c3_04.dart';
 import 'package:smartseat/screens/my_reservations_page.dart';
 import 'package:smartseat/screens/student_profile_page.dart';
+import 'package:smartseat/screens/venue_page.dart';
 
 class StudentHomePage extends StatefulWidget {
   final String userId;
@@ -327,7 +328,18 @@ class HomeTabContent extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VenuePage(
+                            userId: userId,
+                            userEmail: userEmail,
+                            userName: userName,
+                          ),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'See all',
                       style: TextStyle(
@@ -385,7 +397,18 @@ class HomeTabContent extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VenuePage(
+                          userId: userId,
+                          userEmail: userEmail,
+                          userName: userName,
+                        ),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1E88E5),
                     shape: RoundedRectangleBorder(
