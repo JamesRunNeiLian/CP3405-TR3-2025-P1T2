@@ -336,6 +336,7 @@ class HomeTabContent extends StatelessWidget {
                             userId: userId,
                             userEmail: userEmail,
                             userName: userName,
+                            userJCUID: userJCUID,
                           ),
                         ),
                       );
@@ -405,6 +406,7 @@ class HomeTabContent extends StatelessWidget {
                           userId: userId,
                           userEmail: userEmail,
                           userName: userName,
+                          userJCUID: userJCUID,
                         ),
                       ),
                     );

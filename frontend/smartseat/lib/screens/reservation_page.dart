@@ -9,7 +9,7 @@ class ReservationSuccessPage extends StatelessWidget {
   final String userId;
   final String userEmail;
   final String userName;
-  final String studentId;
+  final String userJCUID;
   final String program;
 
   const ReservationSuccessPage({
@@ -20,7 +20,7 @@ class ReservationSuccessPage extends StatelessWidget {
     required this.userId,
     required this.userEmail,
     required this.userName,
-    this.studentId = 'jd123456',
+    this.userJCUID = 'jd123456',
     this.program = 'Bachelor of Information Technology',
   });
 
@@ -185,7 +185,7 @@ class ReservationSuccessPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          studentId,
+                          userJCUID,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -329,6 +329,7 @@ class ReservationSuccessPage extends StatelessWidget {
                           userId: userId,
                           userEmail: userEmail,
                           userName: userName,
+                          userJCUID: userJCUID,
                         ),
                       ),
                       (route) => false,
@@ -366,6 +367,7 @@ class ReservationSuccessPage extends StatelessWidget {
                           userId: userId,
                           userEmail: userEmail,
                           userName: userName,
+                          userJCUID: userJCUID,
                         ),
                       ),
                     );

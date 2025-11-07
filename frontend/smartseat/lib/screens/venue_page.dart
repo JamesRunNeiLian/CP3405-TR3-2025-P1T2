@@ -8,12 +8,14 @@ class VenuePage extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
+  final String userJCUID;
 
   const VenuePage({
     super.key,
     required this.userId,
     required this.userEmail,
     required this.userName,
+    required this.userJCUID,
   });
 
   @override
@@ -298,6 +300,7 @@ class _VenuePageState extends State<VenuePage> {
                     userId: widget.userId,
                     userEmail: widget.userEmail,
                     userName: widget.userName,
+                    userJCUID: widget.userId,
                   ),
                 ),
               );
@@ -383,6 +386,7 @@ class _VenuePageState extends State<VenuePage> {
                 userId: widget.userId,
                 userEmail: widget.userEmail,
                 userName: widget.userName,
+                userJCUID: widget.userJCUID,
               ),
             ),
           );
@@ -396,6 +400,7 @@ class _VenuePageState extends State<VenuePage> {
                 userId: widget.userId,
                 userEmail: widget.userEmail,
                 userName: widget.userName,
+                userJCUID: widget.userJCUID,
               ),
             ),
           );
@@ -556,6 +561,7 @@ class _VenuePageState extends State<VenuePage> {
                             userId: widget.userId,
                             userEmail: widget.userEmail,
                             userName: widget.userName,
+                            userJCUID: widget.userJCUID,
                           ),
                         ),
                       );
@@ -569,6 +575,7 @@ class _VenuePageState extends State<VenuePage> {
                             userId: widget.userId,
                             userEmail: widget.userEmail,
                             userName: widget.userName,
+                            userJCUID: widget.userJCUID,
                           ),
                         ),
                       );
