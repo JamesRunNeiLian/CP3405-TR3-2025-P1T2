@@ -1,31 +1,51 @@
 # app.py
-# This script loads the pre-trained model and serves predictions via a web API.
-# Now includes Reinforcement Learning API endpoints for seat recommendations
+# Flask API server for SmartSeat AI/ML module
+# Provides occupancy forecasting and RL-based seat recommendations
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pickle
 import pandas as pd
 import numpy as np
 import json
 import os
+import sys
 from datetime import datetime
+from supabase import create_client, Client
+
+# Add project root to path
+sys.path.append(os.path.dirname(__file__))
+
+# Import configuration
+from config.supabase_config import SUPABASE_URL, SUPABASE_KEY, API_HOST, API_PORT, API_DEBUG, RL_EPSILON, RL_K_ARMS
 
 print("--- Starting API Server ---")
 
 # Initialize the Flask application
 app = Flask(__name__)
+CORS(app)  # Enable CORS for web/mobile apps
+
+# Initialize Supabase client
+try:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print("✓ Supabase client initialized")
+except Exception as e:
+    print(f"Warning: Could not initialize Supabase: {e}")
+    supabase = None
 
 # --- Load the Trained ARIMA Model ---
-# We load the model from the file created by train.py at the start.
 model_filename = 'arima_model.pkl'
-print(f"Loading the trained model from '{model_filename}'...")
-with open(model_filename, 'rb') as file:
-    model = pickle.load(file)
-print("Model loaded successfully.")
+print(f"Loading ARIMA model from '{model_filename}'...")
+try:
+    with open(model_filename, 'rb') as file:
+        model = pickle.load(file)
+    print("✓ ARIMA model loaded")
+except FileNotFoundError:
+    print("Warning: ARIMA model not found. Run models/train.py to create it.")
+    model = None
 
 # --- Import and Initialize RL Agent ---
-# Import the RL recommendation engine
-from rl_baseline import SeatRecommendationBandit
+from models.rl_baseline import SeatRecommendationBandit
 
 # Define recommendation strategies
 RECOMMENDATION_STRATEGIES = [
@@ -56,8 +76,8 @@ RECOMMENDATION_STRATEGIES = [
 ]
 
 # Initialize RL agent
-rl_agent = SeatRecommendationBandit(k_arms=len(RECOMMENDATION_STRATEGIES), epsilon=0.1)
-print(f"RL Agent initialized with {len(RECOMMENDATION_STRATEGIES)} recommendation strategies.")
+rl_agent = SeatRecommendationBandit(k_arms=RL_K_ARMS, epsilon=RL_EPSILON)
+print(f"✓ RL Agent initialized ({RL_K_ARMS} strategies, ε={RL_EPSILON})")
 
 # File to persist RL agent state
 RL_STATE_FILE = 'rl_agent_state.json'
@@ -176,6 +196,21 @@ def get_seat_recommendation():
             "classroom_id": data.get("classroom_id", None)
         }
         
+        # Store recommendation in Supabase
+        if supabase:
+            try:
+                supabase.table('rl_recommendations').insert({
+                    'user_id': data.get("user_id"),
+                    'classroom_id': data.get("classroom_id"),
+                    'strategy_id': strategy_id,
+                    'strategy_name': strategy["name"],
+                    'zone': strategy["zone"],
+                    'confidence': float(rl_agent.q_values[strategy_id]),
+                    'timestamp': datetime.now().isoformat()
+                }).execute()
+            except Exception as e:
+                print(f"Warning: Could not store recommendation in Supabase: {e}")
+        
         print(f"Recommended strategy: {strategy['name']} (ID: {strategy_id})")
         return jsonify(response), 200
         
@@ -243,6 +278,22 @@ def submit_feedback():
             "total_trials": int(rl_agent.n_pulls[strategy_id]),
             "timestamp": datetime.now().isoformat()
         }
+        
+        # Store feedback in Supabase
+        if supabase:
+            try:
+                supabase.table('rl_feedbacks').insert({
+                    'user_id': data.get("user_id"),
+                    'seat_id': data.get("seat_id"),
+                    'strategy_id': strategy_id,
+                    'strategy_name': RECOMMENDATION_STRATEGIES[strategy_id]["name"],
+                    'accepted': accepted,
+                    'reward': reward,
+                    'updated_confidence': float(rl_agent.q_values[strategy_id]),
+                    'timestamp': datetime.now().isoformat()
+                }).execute()
+            except Exception as e:
+                print(f"Warning: Could not store feedback in Supabase: {e}")
         
         print(f"Feedback received for strategy {strategy_id}: reward={reward}, new confidence={response['updated_confidence']:.4f}")
         return jsonify(response), 200
@@ -357,14 +408,17 @@ def health_check():
 
 # --- Run the Server ---
 if __name__ == '__main__':
-    # This makes the server accessible on your local machine at port 5000
-    print("\n=== API Endpoints Available ===")
-    print("1. GET  /predict         - Occupancy Forecasting")
-    print("2. POST /rl/recommend    - Get Seat Recommendation")
-    print("3. POST /rl/feedback     - Submit User Feedback")
-    print("4. GET  /rl/status       - View RL Model Status")
-    print("5. POST /rl/reset        - Reset RL Model")
-    print("6. GET  /health          - Health Check")
-    print("================================\n")
+    print("\n" + "="*60)
+    print(" API Endpoints Available")
+    print("="*60)
+    print("  GET  /predict         - Occupancy Forecasting")
+    print("  POST /rl/recommend    - Get Seat Recommendation")
+    print("  POST /rl/feedback     - Submit User Feedback")
+    print("  GET  /rl/status       - View RL Model Status")
+    print("  POST /rl/reset        - Reset RL Model")
+    print("  GET  /health          - Health Check")
+    print("="*60)
+    print(f"\nStarting server at http://{API_HOST}:{API_PORT}")
+    print("Press Ctrl+C to stop\n")
     
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=API_DEBUG, port=API_PORT, host=API_HOST)
