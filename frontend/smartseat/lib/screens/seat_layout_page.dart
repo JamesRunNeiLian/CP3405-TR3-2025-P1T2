@@ -50,11 +50,10 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
       case 1:
         return Colors.red;
       case 2:
-        return Colors.blue;
-      case 3:
-        return Colors.purple;
+        return Colors.cyanAccent;
+      // Deleted Accessible seat color
       default:
-        return Colors.grey;
+        return Colors.green;
     }
   }
 
@@ -302,9 +301,8 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                         const SizedBox(height: 8),
                         _buildLegendItem(Colors.red, 'Occupied'),
                         const SizedBox(height: 8),
-                        _buildLegendItem(Colors.blue, 'Reserved'),
-                        const SizedBox(height: 8),
-                        _buildLegendItem(Colors.purple, 'Accessible'),
+                        _buildLegendItem(Colors.cyanAccent, 'Reserved'),
+                        // Deleted Accessible legend,
                       ],
                     ),
                   ),

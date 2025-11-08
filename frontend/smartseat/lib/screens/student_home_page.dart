@@ -368,6 +368,17 @@ class HomeTabContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   VenueCard(
+                    roomNumber: 'C4-15',
+                    availableSeats: '20/60 seats available',
+                    icon: Icons.people_outline,
+                    userId: userId,
+                    userEmail: userEmail,
+                    userName: userName,
+                    userJCUID: userJCUID,
+
+                  ),
+                  const SizedBox(height: 12),
+                  VenueCard(
                     roomNumber: 'C3-05',
                     availableSeats: '18/60 seats available',
                     icon: Icons.people_outline,
@@ -472,26 +483,63 @@ class VenueCard extends StatelessWidget {
       onTap: () {
         // Navigate to the appropriate layout based on room number
         Widget destination;
-        if (roomNumber == 'C3-04') {
-          destination = SeatLayoutPageC304(
-            roomNumber: roomNumber,
-            timeSlot: 'Available Now',
-            userId: userId,
-            userEmail: userEmail,
-            userName: userName,
-            userJCUID: userJCUID,
-          );
-        } else {
-          destination = SeatLayoutPage(
-            roomNumber: roomNumber,
-            timeSlot: 'Available Now',
-            userId: userId,
-            userEmail: userEmail,
-            userName: userName,
-            userJCUID: userJCUID,
 
-          );
+        //RoomNumber Selection tested with switch
+      switch (roomNumber) {
+          case 'C4-14':
+            destination = SeatLayoutPage(
+              roomNumber: roomNumber,
+              timeSlot: 'Available Now',
+              userId: userId,
+              userEmail: userEmail,
+              userName: userName,
+              userJCUID: userJCUID,
+            );
+            break;
+          case 'C4-15':
+            destination = SeatLayoutPage(
+              roomNumber: roomNumber,
+              timeSlot: 'Available Now',
+              userId: userId,
+              userEmail: userEmail,
+              userName: userName,
+              userJCUID: userJCUID,
+            );
+            break;
+          default:
+            destination = SeatLayoutPageC304(
+              roomNumber: roomNumber,
+              timeSlot: 'Available Now',
+              userId: userId,
+              userEmail: userEmail,
+              userName: userName,
+              userJCUID: userJCUID,
+            );
+            break;
         }
+
+        // Original Room selection code
+        
+        // if (roomNumber == 'C4') {
+        //   destination = SeatLayoutPage(
+        //     roomNumber: roomNumber,
+        //     timeSlot: 'Available Now',
+        //     userId: userId,
+        //     userEmail: userEmail,
+        //     userName: userName,
+        //     userJCUID: userJCUID,
+        //   );
+        // }else{
+        //   destination = SeatLayoutPageC304(
+        //     roomNumber: roomNumber,
+        //     timeSlot: 'Available Now',
+        //     userId: userId,
+        //     userEmail: userEmail,
+        //     userName: userName,
+        //     userJCUID: userJCUID,
+
+        //   );
+        // }
         
         Navigator.push(
           context,

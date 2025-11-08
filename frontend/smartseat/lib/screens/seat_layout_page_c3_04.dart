@@ -29,15 +29,15 @@ class _SeatLayoutPageC304State extends State<SeatLayoutPageC304> {
   // Seat status: 0 = Available, 1 = Occupied, 2 = Reserved, 3 = Accessible
   final Map<int, int> seatStatus = {
     // Table 1
-    1: 1, 2: 1, 3: 0, 4: 1, 5: 0, 6: 0,
+    1: 3, 2: 3, 3: 3, 4: 0, 5: 0, 6: 2,
     // Table 2
-    7: 1, 8: 0, 9: 3, 10: 1, 11: 0, 12: 3,
+    7: 1, 8: 0, 9: 0, 10: 1, 11: 0, 12: 0,
     // Table 3
     13: 1, 14: 1, 15: 1, 16: 0, 17: 1, 18: 1,
     // Table 4
-    19: 1, 20: 1, 21: 0, 22: 2, 23: 3, 24: 3,
+    19: 1, 20: 1, 21: 0, 22: 2, 23: 0, 24: 0,
     // Table 5
-    25: 0, 26: 1, 27: 3, 28: 1, 29: 0, 30: 3,
+    25: 1, 26: 1, 27: 2, 28: 3, 29: 3, 30: 3,
   };
 
   int getAvailableSeats() {
@@ -55,11 +55,9 @@ class _SeatLayoutPageC304State extends State<SeatLayoutPageC304> {
       case 1:
         return Colors.red;
       case 2:
-        return Colors.blue;
-      case 3:
-        return Colors.purple;
+        return Colors.cyanAccent;
       default:
-        return Colors.grey;
+        return Colors.green;
     }
   }
 
@@ -349,16 +347,15 @@ class _SeatLayoutPageC304State extends State<SeatLayoutPageC304> {
                         const SizedBox(height: 8),
                         _buildLegendItem(Colors.red, 'Occupied'),
                         const SizedBox(height: 8),
-                        _buildLegendItem(Colors.blue, 'Reserved'),
-                        const SizedBox(height: 8),
-                        _buildLegendItem(Colors.purple, 'Accessible'),
+                        _buildLegendItem(Colors.cyanAccent, 'Reserved'),
+                        // Deleted Accessible legend
                       ],
                     ),
                   ),
 
                   const SizedBox(height: 24),
 
-                  // Accessibility Seats
+                  // Accessibility Seats hardcodded list
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -380,11 +377,11 @@ class _SeatLayoutPageC304State extends State<SeatLayoutPageC304> {
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            _buildAccessibilitySeatChip('Seat 9'),
-                            _buildAccessibilitySeatChip('Seat 12'),
-                            _buildAccessibilitySeatChip('Seat 23'),
-                            _buildAccessibilitySeatChip('Seat 24'),
-                            _buildAccessibilitySeatChip('Seat 27'),
+                            _buildAccessibilitySeatChip('Seat 1'),
+                            _buildAccessibilitySeatChip('Seat 2'),
+                            _buildAccessibilitySeatChip('Seat 3'),
+                            _buildAccessibilitySeatChip('Seat 28'),
+                            _buildAccessibilitySeatChip('Seat 29'),
                             _buildAccessibilitySeatChip('Seat 30'),
                           ],
                         ),
