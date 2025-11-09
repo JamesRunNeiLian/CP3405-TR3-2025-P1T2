@@ -5,6 +5,8 @@ import 'package:smartseat/screens/my_reservations_page.dart';
 import 'package:smartseat/screens/student_profile_page.dart';
 import 'package:smartseat/screens/venue_page.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class StudentHomePage extends StatefulWidget {
   final String userId;
   final String userEmail;
@@ -64,7 +66,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
           currentIndex: _selectedIndex,
           onTap: (index) {
             if (index == 1) {
-              // Navigate to My Reservations page
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -107,7 +108,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
   }
 }
 
-class HomeTabContent extends StatelessWidget {
+class HomeTabContent extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
@@ -124,14 +125,36 @@ class HomeTabContent extends StatelessWidget {
   });
 
   @override
+  State<HomeTabContent> createState() => _HomeTabContentState();
+}
+
+class _HomeTabContentState extends State<HomeTabContent> {
+  late Future<List<Map<String, dynamic>>> _roomsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _roomsFuture = _fetchRooms();
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchRooms() async {
+    final response = await Supabase.instance.client
+        .from('rooms')
+        .select('id, name, capacity, features');
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    String displayName = userName.isNotEmpty ? userName.split(' ').first : 'Student';
+    String displayName =
+        widget.userName.isNotEmpty ? widget.userName.split(' ').first : 'Student';
 
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // existing header UI
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -177,11 +200,11 @@ class HomeTabContent extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => StudentProfilePage(
-                                userId: userId,
-                                userEmail: userEmail,
-                                userName: userName,
-                                userJCUID: userJCUID,
-                                program: program,
+                                userId: widget.userId,
+                                userEmail: widget.userEmail,
+                                userName: widget.userName,
+                                userJCUID: widget.userJCUID,
+                                program: widget.program,
                               ),
                             ),
                           );
@@ -205,6 +228,7 @@ class HomeTabContent extends StatelessWidget {
               ),
             ),
 
+            // existing next booking
             Padding(
               padding: const EdgeInsets.all(16),
               child: Material(
@@ -217,10 +241,10 @@ class HomeTabContent extends StatelessWidget {
                         builder: (context) => SeatLayoutPage(
                           roomNumber: 'C4-14',
                           timeSlot: '2:00 PM - 4:00 PM',
-                          userId: userId,
-                          userEmail: userEmail,
-                          userName: userName,
-                          userJCUID: userJCUID,
+                          userId: widget.userId,
+                          userEmail: widget.userEmail,
+                          userName: widget.userName,
+                          userJCUID: widget.userJCUID,
                         ),
                       ),
                     );
@@ -244,13 +268,13 @@ class HomeTabContent extends StatelessWidget {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(20),
-                          child: Column(
+                          child: const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'NEXT BOOKING',
                                     style: TextStyle(
                                       fontSize: 12,
@@ -259,46 +283,18 @@ class HomeTabContent extends StatelessWidget {
                                       letterSpacing: 1,
                                     ),
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.shade50,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.access_time,
-                                          size: 14,
-                                          color: Colors.green.shade700,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '15 min',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.green.shade700,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
-                              const Text(
+                              SizedBox(height: 16),
+                              Text(
                                 'Room C4-14',
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              const Text(
+                              SizedBox(height: 8),
+                              Text(
                                 '2:00 PM - 4:00 PM',
                                 style: TextStyle(
                                   fontSize: 16,
@@ -315,6 +311,7 @@ class HomeTabContent extends StatelessWidget {
               ),
             ),
 
+            // section title
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -333,10 +330,10 @@ class HomeTabContent extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => VenuePage(
-                            userId: userId,
-                            userEmail: userEmail,
-                            userName: userName,
-                            userJCUID: userJCUID,
+                            userId: widget.userId,
+                            userEmail: widget.userEmail,
+                            userName: widget.userName,
+                            userJCUID: widget.userJCUID,
                           ),
                         ),
                       );
@@ -355,54 +352,50 @@ class HomeTabContent extends StatelessWidget {
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  VenueCard(
-                    roomNumber: 'C3-04',
-                    availableSeats: '17/30 seats available',
-                    icon: Icons.people_outline,
-                    userId: userId,
-                    userEmail: userEmail,
-                    userName: userName,
-                    userJCUID: userJCUID,
-                  ),
-                  const SizedBox(height: 12),
-                  VenueCard(
-                    roomNumber: 'C4-15',
-                    availableSeats: '20/60 seats available',
-                    icon: Icons.people_outline,
-                    userId: userId,
-                    userEmail: userEmail,
-                    userName: userName,
-                    userJCUID: userJCUID,
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _roomsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Text('No rooms available.'),
+                    );
+                  }
 
-                  ),
-                  const SizedBox(height: 12),
-                  VenueCard(
-                    roomNumber: 'C3-05',
-                    availableSeats: '18/60 seats available',
-                    icon: Icons.people_outline,
-                    userId: userId,
-                    userEmail: userEmail,
-                    userName: userName,
-                    userJCUID: userJCUID,
-
-                  ),
-                  const SizedBox(height: 12),
-                  VenueCard(
-                    roomNumber: 'C3-06',
-                    availableSeats: '55/100 seats available',
-                    icon: Icons.people_outline,
-                    userId: userId,
-                    userEmail: userEmail,
-                    userName: userName,
-                    userJCUID: userJCUID,
-
-                  ),
-                ],
+                  final rooms = snapshot.data!;
+                  return Column(
+                    children: rooms.map((room) {
+                      final name = room['name'] ?? 'Unnamed';
+                      final capacity = room['capacity'] ?? 0;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: VenueCard(
+                          roomNumber: name,
+                          availableSeats: '$capacity seats available',
+                          icon: Icons.people_outline,
+                          userId: widget.userId,
+                          userEmail: widget.userEmail,
+                          userName: widget.userName,
+                          userJCUID: widget.userJCUID,
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
               ),
             ),
 
+            // existing find seat button
             Padding(
               padding: const EdgeInsets.all(16),
               child: SizedBox(
@@ -414,10 +407,10 @@ class HomeTabContent extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => VenuePage(
-                          userId: userId,
-                          userEmail: userEmail,
-                          userName: userName,
-                          userJCUID: userJCUID,
+                          userId: widget.userId,
+                          userEmail: widget.userEmail,
+                          userName: widget.userName,
+                          userJCUID: widget.userJCUID,
                         ),
                       ),
                     );
@@ -429,9 +422,9 @@ class HomeTabContent extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(Icons.location_on, color: Colors.white),
                       SizedBox(width: 8),
                       Text(
@@ -474,38 +467,34 @@ class VenueCard extends StatelessWidget {
     required this.userEmail,
     required this.userName,
     required this.userJCUID,
-    
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the appropriate layout based on room number
         Widget destination;
-
-        //RoomNumber Selection tested with switch
-      switch (roomNumber) {
-          case 'C4-14':
-            destination = SeatLayoutPage(
-              roomNumber: roomNumber,
-              timeSlot: 'Available Now',
-              userId: userId,
-              userEmail: userEmail,
-              userName: userName,
-              userJCUID: userJCUID,
-            );
-            break;
-          case 'C4-15':
-            destination = SeatLayoutPage(
-              roomNumber: roomNumber,
-              timeSlot: 'Available Now',
-              userId: userId,
-              userEmail: userEmail,
-              userName: userName,
-              userJCUID: userJCUID,
-            );
-            break;
+        switch (roomNumber) {
+          // case 'C4-14':
+          //   destination = SeatLayoutPage(
+          //     roomNumber: roomNumber,
+          //     timeSlot: 'Available Now',
+          //     userId: userId,
+          //     userEmail: userEmail,
+          //     userName: userName,
+          //     userJCUID: userJCUID,
+          //   );
+          //   break;
+          // case 'C4-15':
+          //   destination = SeatLayoutPage(
+          //     roomNumber: roomNumber,
+          //     timeSlot: 'Available Now',
+          //     userId: userId,
+          //     userEmail: userEmail,
+          //     userName: userName,
+          //     userJCUID: userJCUID,
+          //   );
+          //   break;
           default:
             destination = SeatLayoutPageC304(
               roomNumber: roomNumber,
@@ -517,30 +506,6 @@ class VenueCard extends StatelessWidget {
             );
             break;
         }
-
-        // Original Room selection code
-        
-        // if (roomNumber == 'C4') {
-        //   destination = SeatLayoutPage(
-        //     roomNumber: roomNumber,
-        //     timeSlot: 'Available Now',
-        //     userId: userId,
-        //     userEmail: userEmail,
-        //     userName: userName,
-        //     userJCUID: userJCUID,
-        //   );
-        // }else{
-        //   destination = SeatLayoutPageC304(
-        //     roomNumber: roomNumber,
-        //     timeSlot: 'Available Now',
-        //     userId: userId,
-        //     userEmail: userEmail,
-        //     userName: userName,
-        //     userJCUID: userJCUID,
-
-        //   );
-        // }
-        
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => destination),
