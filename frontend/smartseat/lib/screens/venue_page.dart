@@ -1,5 +1,6 @@
 // frontend/smartseat/lib/screens/venue_page.dart
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // 🔹 [ADDED]
 import 'package:smartseat/screens/seat_layout_page.dart';
 import 'package:smartseat/screens/seat_layout_page_c3_04.dart';
 import 'package:smartseat/screens/my_reservations_page.dart';
@@ -27,67 +28,23 @@ class _VenuePageState extends State<VenuePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // Venue data
-  final List<Map<String, dynamic>> _venues = [
-    {
-      'id': 'C4-14',
-      'name': 'C4-14',
-      'available': 23,
-      'total': 60,
-      'building': 'Building C4',
-      'level': 'Level 1',
-    },
-    {
-      'id': 'C3-03',
-      'name': 'C3-03',
-      'available': 25,
-      'total': 60,
-      'building': 'Building C3',
-      'level': 'Level 3',
-    },
-    {
-      'id': 'C3-04',
-      'name': 'C3-04',
-      'available': 17,
-      'total': 30,
-      'building': 'Building C3',
-      'level': 'Level 3',
-    },
-    {
-      'id': 'C3-05',
-      'name': 'C3-05',
-      'available': 18,
-      'total': 60,
-      'building': 'Building C3',
-      'level': 'Level 3',
-    },
-    {
-      'id': 'C3-06',
-      'name': 'C3-06',
-      'available': 55,
-      'total': 100,
-      'building': 'Building C3',
-      'level': 'Level 3',
-    },
-    {
-      'id': 'C4-13',
-      'name': 'C4-13',
-      'available': 29,
-      'total': 60,
-      'building': 'Building C4',
-      'level': 'Level 1',
-    },
-  ];
+  // 🔹 [REMOVED] hardcoded _venues list
+  // 🔹 [ADDED] Future for Supabase room data
+  late Future<List<Map<String, dynamic>>> _roomsFuture;
 
-  List<Map<String, dynamic>> get _filteredVenues {
-    if (_searchQuery.isEmpty) {
-      return _venues;
-    }
-    return _venues.where((venue) {
-      final query = _searchQuery.toLowerCase();
-      return venue['name'].toLowerCase().contains(query) ||
-          venue['building'].toLowerCase().contains(query);
-    }).toList();
+  @override
+  void initState() {
+    super.initState();
+    _roomsFuture = _fetchRooms(); // 🔹 [ADDED]
+  }
+
+  // 🔹 [ADDED] Fetch room data from Supabase
+  Future<List<Map<String, dynamic>>> _fetchRooms() async {
+    final response = await Supabase.instance.client
+        .from('rooms')
+        .select('id, name, capacity, features');
+
+    return List<Map<String, dynamic>>.from(response);
   }
 
   @override
@@ -122,7 +79,8 @@ class _VenuePageState extends State<VenuePage> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Text(
@@ -142,8 +100,8 @@ class _VenuePageState extends State<VenuePage> {
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
+                      children: const [
+                        Text(
                           'Find Your Perfect Seat',
                           style: TextStyle(
                             color: Colors.white,
@@ -151,30 +109,13 @@ class _VenuePageState extends State<VenuePage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        const Text(
+                        SizedBox(height: 4),
+                        Text(
                           'Browse available classrooms',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                           ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Stats row
-                        Row(
-                          children: [
-                            _buildStatBox('Venues', _venues.length.toString()),
-                            const SizedBox(width: 12),
-                            _buildStatBox(
-                              'Available',
-                              _venues
-                                  .fold(0, (sum, v) => sum + (v['available'] as int))
-                                  .toString(),
-                            ),
-                            const SizedBox(width: 12),
-                            _buildStatBox('Today', 'Oct 6'),
-                          ],
                         ),
                       ],
                     ),
@@ -203,80 +144,61 @@ class _VenuePageState extends State<VenuePage> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 ),
               ),
             ),
 
-            // Venue count
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Row(
-                children: [
-                  Text(
-                    'Showing ${_filteredVenues.length} venues',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 4,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'All available now',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Venue list
+            // 🔹 [CHANGED] Venue list section using FutureBuilder
             Expanded(
-              child: _filteredVenues.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            size: 64,
-                            color: Colors.grey[400],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No venues found',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _filteredVenues.length,
-                      itemBuilder: (context, index) {
-                        final venue = _filteredVenues[index];
-                        return _buildVenueCard(venue);
-                      },
-                    ),
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _roomsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text('No venues found'),
+                    );
+                  }
+
+                  // Filter rooms based on search query
+                  final venues = snapshot.data!;
+                  final filteredVenues = _searchQuery.isEmpty
+                      ? venues
+                      : venues.where((venue) {
+                          final query = _searchQuery.toLowerCase();
+                          return (venue['name'] ?? '')
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(query) ||
+                              (venue['building'] ?? '')
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(query);
+                        }).toList();
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filteredVenues.length,
+                    itemBuilder: (context, index) {
+                      final venue = filteredVenues[index];
+                      return _buildVenueCard(venue);
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
       ),
+
+      // Bottom navigation bar (unchanged)
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -292,7 +214,6 @@ class _VenuePageState extends State<VenuePage> {
           currentIndex: _selectedIndex,
           onTap: (index) {
             if (index == 1) {
-              // Navigate to My Reservations page
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -300,7 +221,7 @@ class _VenuePageState extends State<VenuePage> {
                     userId: widget.userId,
                     userEmail: widget.userEmail,
                     userName: widget.userName,
-                    userJCUID: widget.userId,
+                    userJCUID: widget.userJCUID,
                   ),
                 ),
               );
@@ -334,54 +255,21 @@ class _VenuePageState extends State<VenuePage> {
     );
   }
 
-  Widget _buildStatBox(String label, String value) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+  // Venue card builder (mostly unchanged)
   Widget _buildVenueCard(Map<String, dynamic> venue) {
-    final available = venue['available'] as int;
-    final total = venue['total'] as int;
-    final percentage = (available / total * 100).round();
-    
+    final name = venue['name'] ?? 'Unnamed';
+    final available = (venue['available'] ?? 0) as int;
+    final total = (venue['capacity'] ?? 1) as int;
+    // final percentage = ((available / total) * 100).round();
+
     return GestureDetector(
       onTap: () {
-        // Navigate to the appropriate seat layout page
-        if (venue['id'] == 'C3-04') {
+        if (name == 'C3-04') {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => SeatLayoutPageC304(
-                roomNumber: venue['id'],
+                roomNumber: name,
                 timeSlot: 'Available Now',
                 userId: widget.userId,
                 userEmail: widget.userEmail,
@@ -395,7 +283,7 @@ class _VenuePageState extends State<VenuePage> {
             context,
             MaterialPageRoute(
               builder: (context) => SeatLayoutPage(
-                roomNumber: venue['id'],
+                roomNumber: name,
                 timeSlot: 'Available Now',
                 userId: widget.userId,
                 userEmail: widget.userEmail,
@@ -448,20 +336,13 @@ class _VenuePageState extends State<VenuePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              venue['name'],
+                              name,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              '${venue['building']}, ${venue['level']}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -509,105 +390,30 @@ class _VenuePageState extends State<VenuePage> {
                   ),
                   const SizedBox(height: 8),
 
-                  // Progress bar
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: available / total,
-                      minHeight: 8,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        percentage > 50
-                            ? Colors.green
-                            : percentage > 25
-                                ? Colors.orange
-                                : Colors.red,
-                      ),
-                    ),
+                    // child: LinearProgressIndicator(
+                    //   value: available / total,
+                    //   minHeight: 8,
+                    //   backgroundColor: Colors.grey[200],
+                    //   valueColor: AlwaysStoppedAnimation<Color>(
+                    //     percentage > 50
+                    //         ? Colors.green
+                    //         : percentage > 25
+                    //             ? Colors.orange
+                    //             : Colors.red,
+                    //   ),
+                    // ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '$percentage% available',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
+                  // Text(
+                  //   '$percentage% available',
+                  //   style: TextStyle(
+                  //     fontSize: 12,
+                  //     color: Colors.grey[600],
+                  //   ),
+                  // ),
                 ],
-              ),
-            ),
-
-            // View Seats button
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    // Same navigation logic as tapping the card
-                    if (venue['id'] == 'C3-04') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SeatLayoutPageC304(
-                            roomNumber: venue['id'],
-                            timeSlot: 'Available Now',
-                            userId: widget.userId,
-                            userEmail: widget.userEmail,
-                            userName: widget.userName,
-                            userJCUID: widget.userJCUID,
-                          ),
-                        ),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SeatLayoutPage(
-                            roomNumber: venue['id'],
-                            timeSlot: 'Available Now',
-                            userId: widget.userId,
-                            userEmail: widget.userEmail,
-                            userName: widget.userName,
-                            userJCUID: widget.userJCUID,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(
-                          Icons.visibility,
-                          size: 18,
-                          color: Color(0xFF1E88E5),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'View Seats',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF1E88E5),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ),
             ),
           ],
