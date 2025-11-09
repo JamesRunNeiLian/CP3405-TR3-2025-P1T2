@@ -51,9 +51,7 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
       debugPrint('Raw seat data: $data');
 
       if (data != null && data is List) {
-        seats = data.map((seat) {
-          return SeatModel.fromMap(seat); // SeatModel.fromMap will normalize status
-        }).toList();
+        seats = data.map((seat) => SeatModel.fromMap(seat)).toList();
       } else {
         seats = [];
       }
@@ -89,6 +87,7 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
   /// Get color based on seat status
   Color getSeatColor(SeatModel seat) {
     if (selectedSeat == seat.number) return Colors.blue;
+
     switch (seat.status.toLowerCase()) {
       case 'available':
         return Colors.green;
@@ -104,6 +103,11 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
   /// Count available seats
   int getAvailableSeats() {
     return seats.where((seat) => seat.status.toLowerCase() == 'available').length;
+  }
+
+  /// Get all accessible seats (type: 'accessible')
+  List<SeatModel> getAccessibleSeats() {
+    return seats.where((seat) => seat.type.toLowerCase() == 'accessible').toList();
   }
 
   /// Legend widget
@@ -126,6 +130,8 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final accessibleSeats = getAccessibleSeats();
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -181,13 +187,43 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                       SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Tap any green seat to reserve. Red seats are occupied, cyan seats are reserved.',
+                          'Tap green seats to reserve. Red seats are occupied, cyan seats are reserved. Accessible seats are highlighted below.',
                           style: TextStyle(fontSize: 14),
                         ),
                       ),
                     ],
                   ),
                 ),
+
+                // Accessible Seats Display
+                if (accessibleSeats.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.purple[50],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Accessible Seats:',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          children: accessibleSeats
+                              .map((seat) => Chip(
+                                    label: Text('Seat ${seat.number}'),
+                                    backgroundColor: Colors.purple[200],
+                                  ))
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
 
                 // Seat Grid
                 Expanded(
@@ -235,8 +271,7 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                             ),
                           );
                         }),
-
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
 
                         // Legend
                         Container(
@@ -255,6 +290,11 @@ class _SeatLayoutPageState extends State<SeatLayoutPage> {
                               _buildLegendItem(Colors.cyanAccent, 'Reserved'),
                               const SizedBox(height: 8),
                               _buildLegendItem(Colors.blue, 'Selected'),
+                              if (accessibleSeats.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: _buildLegendItem(Colors.purple, 'Accessible'),
+                                ),
                             ],
                           ),
                         ),

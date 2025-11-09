@@ -2,7 +2,7 @@ class SeatModel {
   final int id;                  // Primary key (integer)
   final DateTime? createdAt;     // Timestamp
   final int number;              // Seat number (integer)
-  final String type;             // Type (e.g., "standard", "vip")
+  final String type;             // Type (e.g., "Non=accessible", "Accessible")
   final String status;           // Status (normalized to lowercase)
   final List<String> features;   // List of special features
   final int roomId;              // Foreign key from rooms table

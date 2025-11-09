@@ -247,7 +247,7 @@ class _HomeTabState extends State<HomeTab> {
                   final rooms = snapshot.data!;
                   return Column(
                     children: rooms.map((room) {
-                      final roomID = room['id'] ?? 0; // keep as int
+                      final roomID = room['id'] ?? 0;
                       final name = room['name'] ?? 'Unnamed';
                       final capacity = room['capacity'] ?? 0;
                       return Padding(
@@ -268,6 +268,54 @@ class _HomeTabState extends State<HomeTab> {
                 },
               ),
             ),
+
+            // Find a Seat Now button
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VenuePage(
+                          userId: widget.userId,
+                          userEmail: widget.userEmail,
+                          userName: widget.userName,
+                          userJCUID: widget.userJCUID,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E88E5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.location_on, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        'Find a Seat Now',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -277,7 +325,7 @@ class _HomeTabState extends State<HomeTab> {
 
 // ------------------ VenueCard ------------------
 class VenueCard extends StatelessWidget {
-  final int roomID; // backend ID as int
+  final int roomID;
   final String roomNumber;
   final String availableSeats;
   final IconData icon;
@@ -306,7 +354,7 @@ class VenueCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => SeatLayoutPage(
-              roomID: roomID, // int
+              roomID: roomID,
               roomNumber: roomNumber,
               timeSlot: 'Available Now',
               userId: userId,
