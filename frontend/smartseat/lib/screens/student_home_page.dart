@@ -475,16 +475,16 @@ class VenueCard extends StatelessWidget {
       onTap: () {
         Widget destination;
         switch (roomNumber) {
-          // case 'C4-14':
-          //   destination = SeatLayoutPage(
-          //     roomNumber: roomNumber,
-          //     timeSlot: 'Available Now',
-          //     userId: userId,
-          //     userEmail: userEmail,
-          //     userName: userName,
-          //     userJCUID: userJCUID,
-          //   );
-          //   break;
+          case 'C4-14':
+            destination = SeatLayoutPage(
+              roomNumber: roomNumber,
+              timeSlot: 'Available Now',
+              userId: userId,
+              userEmail: userEmail,
+              userName: userName,
+              userJCUID: userJCUID,
+            );
+            break;
           // case 'C4-15':
           //   destination = SeatLayoutPage(
           //     roomNumber: roomNumber,
