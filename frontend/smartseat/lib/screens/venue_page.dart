@@ -1,6 +1,5 @@
-// frontend/smartseat/lib/screens/venue_page.dart
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // 🔹 [ADDED]
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:smartseat/screens/seat_layout_page.dart';
 import 'package:smartseat/screens/seat_layout_page_c3_04.dart';
 import 'package:smartseat/screens/my_reservations_page.dart';
@@ -28,22 +27,18 @@ class _VenuePageState extends State<VenuePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // 🔹 [REMOVED] hardcoded _venues list
-  // 🔹 [ADDED] Future for Supabase room data
   late Future<List<Map<String, dynamic>>> _roomsFuture;
 
   @override
   void initState() {
     super.initState();
-    _roomsFuture = _fetchRooms(); // 🔹 [ADDED]
+    _roomsFuture = _fetchRooms();
   }
 
-  // 🔹 [ADDED] Fetch room data from Supabase
   Future<List<Map<String, dynamic>>> _fetchRooms() async {
     final response = await Supabase.instance.client
         .from('rooms')
         .select('id, name, capacity, features');
-
     return List<Map<String, dynamic>>.from(response);
   }
 
@@ -60,7 +55,7 @@ class _VenuePageState extends State<VenuePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header section
+            // Header
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -73,14 +68,12 @@ class _VenuePageState extends State<VenuePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back button and title
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
                         IconButton(
-                          icon:
-                              const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Text(
@@ -94,8 +87,6 @@ class _VenuePageState extends State<VenuePage> {
                       ],
                     ),
                   ),
-
-                  // Stats section
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
                     child: Column(
@@ -136,7 +127,7 @@ class _VenuePageState extends State<VenuePage> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search by venue name or building...',
+                  hintText: 'Search by venue name or features...',
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   filled: true,
                   fillColor: Colors.grey[100],
@@ -144,13 +135,12 @@ class _VenuePageState extends State<VenuePage> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 ),
               ),
             ),
 
-            // 🔹 [CHANGED] Venue list section using FutureBuilder
+            // Rooms list
             Expanded(
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _roomsFuture,
@@ -158,26 +148,21 @@ class _VenuePageState extends State<VenuePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
+                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text('No venues found'),
-                    );
+                    return const Center(child: Text('No venues found'));
                   }
 
-                  // Filter rooms based on search query
-                  final venues = snapshot.data!;
-                  final filteredVenues = _searchQuery.isEmpty
-                      ? venues
-                      : venues.where((venue) {
+                  final rooms = snapshot.data!;
+                  final filteredRooms = _searchQuery.isEmpty
+                      ? rooms
+                      : rooms.where((room) {
                           final query = _searchQuery.toLowerCase();
-                          return (venue['name'] ?? '')
+                          return (room['name'] ?? '')
                                   .toString()
                                   .toLowerCase()
                                   .contains(query) ||
-                              (venue['building'] ?? '')
+                              (room['features'] ?? '')
                                   .toString()
                                   .toLowerCase()
                                   .contains(query);
@@ -185,10 +170,10 @@ class _VenuePageState extends State<VenuePage> {
 
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: filteredVenues.length,
+                    itemCount: filteredRooms.length,
                     itemBuilder: (context, index) {
-                      final venue = filteredVenues[index];
-                      return _buildVenueCard(venue);
+                      final room = filteredRooms[index];
+                      return _buildRoomCard(room);
                     },
                   );
                 },
@@ -198,7 +183,6 @@ class _VenuePageState extends State<VenuePage> {
         ),
       ),
 
-      // Bottom navigation bar (unchanged)
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -255,12 +239,10 @@ class _VenuePageState extends State<VenuePage> {
     );
   }
 
-  // Venue card builder (mostly unchanged)
-  Widget _buildVenueCard(Map<String, dynamic> venue) {
-    final name = venue['name'] ?? 'Unnamed';
-    final available = (venue['available'] ?? 0) as int;
-    final total = (venue['capacity'] ?? 1) as int;
-    // final percentage = ((available / total) * 100).round();
+  Widget _buildRoomCard(Map<String, dynamic> room) {
+    final int roomID = room['id'] is int ? room['id'] : int.parse(room['id'].toString());
+    final name = room['name'] ?? 'Unnamed';
+    final capacity = room['capacity'] ?? 0;
 
     return GestureDetector(
       onTap: () {
@@ -283,6 +265,7 @@ class _VenuePageState extends State<VenuePage> {
             context,
             MaterialPageRoute(
               builder: (context) => SeatLayoutPage(
+                roomID: roomID, // int
                 roomNumber: name,
                 timeSlot: 'Available Now',
                 userId: widget.userId,
@@ -296,6 +279,7 @@ class _VenuePageState extends State<VenuePage> {
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -307,113 +291,43 @@ class _VenuePageState extends State<VenuePage> {
             ),
           ],
         ),
-        child: Column(
+        child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.location_on, color: Color(0xFF1E88E5), size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Room name and availability badge
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.location_on,
-                          color: Color(0xFF1E88E5),
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Available',
-                          style: TextStyle(
-                            color: Colors.green.shade700,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    name,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Seats available info
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Seats Available',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      Text(
-                        '$available/$total seats',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 4),
+                  Text(
+                    '$capacity seats',
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
-                  const SizedBox(height: 8),
-
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    // child: LinearProgressIndicator(
-                    //   value: available / total,
-                    //   minHeight: 8,
-                    //   backgroundColor: Colors.grey[200],
-                    //   valueColor: AlwaysStoppedAnimation<Color>(
-                    //     percentage > 50
-                    //         ? Colors.green
-                    //         : percentage > 25
-                    //             ? Colors.orange
-                    //             : Colors.red,
-                    //   ),
-                    // ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Text(
-                  //   '$percentage% available',
-                  //   style: TextStyle(
-                  //     fontSize: 12,
-                  //     color: Colors.grey[600],
-                  //   ),
-                  // ),
                 ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'Available',
+                style: TextStyle(color: Colors.green.shade700, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ],
