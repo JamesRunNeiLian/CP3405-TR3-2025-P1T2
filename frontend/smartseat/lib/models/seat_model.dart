@@ -1,57 +1,79 @@
 class SeatModel {
-  final String? id; // UUID from Supabase
-  final String classroomId;
-  final String seatNumber;
-  final int rowNumber;
-  final int columnNumber;
-  final bool isAvailable;
+  final int id;                  // Primary key (integer)
+  final DateTime? createdAt;     // Timestamp
+  final int number;              // Seat number (integer)
+  final String type;             // Type (e.g., "standard", "vip")
+  final String status;           // Status (normalized to lowercase)
+  final List<String> features;   // List of special features
+  final int roomId;              // Foreign key from rooms table
 
   SeatModel({
-    this.id,
-    required this.classroomId,
-    required this.seatNumber,
-    required this.rowNumber,
-    required this.columnNumber,
-    this.isAvailable = true,
+    required this.id,
+    this.createdAt,
+    required this.number,
+    required this.type,
+    required this.status,
+    required this.features,
+    required this.roomId,
   });
 
+  /// Convert Dart object → Map (for Supabase insert/update)
   Map<String, dynamic> toMap() {
     return {
-      if (id != null) 'id': id,
-      'classroom_id': classroomId,
-      'seat_number': seatNumber,
-      'row_number': rowNumber,
-      'column_number': columnNumber,
-      'is_available': isAvailable,
+      'id': id,
+      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+      'number': number,
+      'type': type,
+      'status': status,
+      'features': features,
+      'roomID': roomId,
     };
   }
 
+  /// Convert Supabase response → Dart object
   factory SeatModel.fromMap(Map<String, dynamic> map) {
+    // Normalize status to lowercase
+    String normalizedStatus = (map['status'] as String?)?.toLowerCase() ?? 'unknown';
+
     return SeatModel(
-      id: map['id'] as String?,
-      classroomId: map['classroom_id'] as String,
-      seatNumber: map['seat_number'] as String,
-      rowNumber: map['row_number'] as int,
-      columnNumber: map['column_number'] as int,
-      isAvailable: map['is_available'] as bool? ?? true,
+      id: (map['id'] is int) 
+          ? map['id'] as int 
+          : int.tryParse(map['id'].toString()) ?? 0,
+      createdAt: map['created_at'] != null
+          ? DateTime.parse(map['created_at'])
+          : null,
+      number: (map['number'] is int)
+          ? map['number'] as int
+          : int.tryParse(map['number'].toString()) ?? 0,
+      type: map['type'] as String? ?? '',
+      status: normalizedStatus, // Use normalized lowercase status
+      features: (map['features'] is List)
+          ? List<String>.from(map['features'])
+          : (map['features']?.toString().split(',') ?? []),
+      roomId: (map['roomID'] is int)
+          ? map['roomID'] as int
+          : int.tryParse(map['roomID'].toString()) ?? 0,
     );
   }
 
+  /// Create a modified copy (immutable pattern)
   SeatModel copyWith({
-    String? id,
-    String? classroomId,
-    String? seatNumber,
-    int? rowNumber,
-    int? columnNumber,
-    bool? isAvailable,
+    int? id,
+    DateTime? createdAt,
+    int? number,
+    String? type,
+    String? status,
+    List<String>? features,
+    int? roomId,
   }) {
     return SeatModel(
       id: id ?? this.id,
-      classroomId: classroomId ?? this.classroomId,
-      seatNumber: seatNumber ?? this.seatNumber,
-      rowNumber: rowNumber ?? this.rowNumber,
-      columnNumber: columnNumber ?? this.columnNumber,
-      isAvailable: isAvailable ?? this.isAvailable,
+      createdAt: createdAt ?? this.createdAt,
+      number: number ?? this.number,
+      type: type ?? this.type,
+      status: status ?? this.status,
+      features: features ?? this.features,
+      roomId: roomId ?? this.roomId,
     );
   }
 }

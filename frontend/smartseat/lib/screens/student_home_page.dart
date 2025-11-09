@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:smartseat/screens/seat_layout_page.dart';
-import 'package:smartseat/screens/seat_layout_page_c3_04.dart';
 import 'package:smartseat/screens/my_reservations_page.dart';
 import 'package:smartseat/screens/student_profile_page.dart';
 import 'package:smartseat/screens/venue_page.dart';
-
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentHomePage extends StatefulWidget {
   final String userId;
@@ -29,14 +27,13 @@ class StudentHomePage extends StatefulWidget {
 
 class _StudentHomePageState extends State<StudentHomePage> {
   int _selectedIndex = 0;
-
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     _pages = [
-      HomeTabContent(
+      HomeTab(
         userId: widget.userId,
         userEmail: widget.userEmail,
         userName: widget.userName,
@@ -108,14 +105,15 @@ class _StudentHomePageState extends State<StudentHomePage> {
   }
 }
 
-class HomeTabContent extends StatefulWidget {
+// ------------------ HomeTab ------------------
+class HomeTab extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
   final String userJCUID;
   final String program;
 
-  const HomeTabContent({
+  const HomeTab({
     super.key,
     required this.userId,
     required this.userEmail,
@@ -125,10 +123,10 @@ class HomeTabContent extends StatefulWidget {
   });
 
   @override
-  State<HomeTabContent> createState() => _HomeTabContentState();
+  State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabContentState extends State<HomeTabContent> {
+class _HomeTabState extends State<HomeTab> {
   late Future<List<Map<String, dynamic>>> _roomsFuture;
 
   @override
@@ -154,7 +152,7 @@ class _HomeTabContentState extends State<HomeTabContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // existing header UI
+            // Header
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -165,184 +163,55 @@ class _HomeTabContentState extends State<HomeTabContent> {
                 ),
               ),
               padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Welcome back,',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              displayName,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      const Text(
+                        'Welcome back,',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => StudentProfilePage(
-                                userId: widget.userId,
-                                userEmail: widget.userEmail,
-                                userName: widget.userName,
-                                userJCUID: widget.userJCUID,
-                                program: widget.program,
-                              ),
-                            ),
-                          );
-                        },
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white.withOpacity(0.3),
-                          child: Text(
-                            displayName[0].toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      const SizedBox(height: 4),
+                      Text(
+                        displayName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-
-            // existing next booking
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SeatLayoutPage(
-                          roomNumber: 'C4-14',
-                          timeSlot: '2:00 PM - 4:00 PM',
-                          userId: widget.userId,
-                          userEmail: widget.userEmail,
-                          userName: widget.userName,
-                          userJCUID: widget.userJCUID,
-                        ),
-                      ),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          child: const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'NEXT BOOKING',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey,
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 16),
-                              Text(
-                                'Room C4-14',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                '2:00 PM - 4:00 PM',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // section title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Popular Venues',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => VenuePage(
+                          builder: (context) => StudentProfilePage(
                             userId: widget.userId,
                             userEmail: widget.userEmail,
                             userName: widget.userName,
                             userJCUID: widget.userJCUID,
+                            program: widget.program,
                           ),
                         ),
                       );
                     },
-                    child: const Text(
-                      'See all',
-                      style: TextStyle(
-                        color: Color(0xFF1E88E5),
-                        fontWeight: FontWeight.w600,
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white.withOpacity(0.3),
+                      child: Text(
+                        displayName[0].toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -350,6 +219,9 @@ class _HomeTabContentState extends State<HomeTabContent> {
               ),
             ),
 
+            const SizedBox(height: 16),
+
+            // Rooms list
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -375,11 +247,13 @@ class _HomeTabContentState extends State<HomeTabContent> {
                   final rooms = snapshot.data!;
                   return Column(
                     children: rooms.map((room) {
+                      final roomID = room['id'] ?? 0; // keep as int
                       final name = room['name'] ?? 'Unnamed';
                       final capacity = room['capacity'] ?? 0;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: VenueCard(
+                          roomID: roomID,
                           roomNumber: name,
                           availableSeats: '$capacity seats available',
                           icon: Icons.people_outline,
@@ -394,54 +268,6 @@ class _HomeTabContentState extends State<HomeTabContent> {
                 },
               ),
             ),
-
-            // existing find seat button
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VenuePage(
-                          userId: widget.userId,
-                          userEmail: widget.userEmail,
-                          userName: widget.userName,
-                          userJCUID: widget.userJCUID,
-                        ),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E88E5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.location_on, color: Colors.white),
-                      SizedBox(width: 8),
-                      Text(
-                        'Find a Seat Now',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -449,7 +275,9 @@ class _HomeTabContentState extends State<HomeTabContent> {
   }
 }
 
+// ------------------ VenueCard ------------------
 class VenueCard extends StatelessWidget {
+  final int roomID; // backend ID as int
   final String roomNumber;
   final String availableSeats;
   final IconData icon;
@@ -460,6 +288,7 @@ class VenueCard extends StatelessWidget {
 
   const VenueCard({
     super.key,
+    required this.roomID,
     required this.roomNumber,
     required this.availableSeats,
     required this.icon,
@@ -473,42 +302,19 @@ class VenueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Widget destination;
-        switch (roomNumber) {
-          case 'C4-14':
-            destination = SeatLayoutPage(
-              roomNumber: roomNumber,
-              timeSlot: 'Available Now',
-              userId: userId,
-              userEmail: userEmail,
-              userName: userName,
-              userJCUID: userJCUID,
-            );
-            break;
-          // case 'C4-15':
-          //   destination = SeatLayoutPage(
-          //     roomNumber: roomNumber,
-          //     timeSlot: 'Available Now',
-          //     userId: userId,
-          //     userEmail: userEmail,
-          //     userName: userName,
-          //     userJCUID: userJCUID,
-          //   );
-          //   break;
-          default:
-            destination = SeatLayoutPageC304(
-              roomNumber: roomNumber,
-              timeSlot: 'Available Now',
-              userId: userId,
-              userEmail: userEmail,
-              userName: userName,
-              userJCUID: userJCUID,
-            );
-            break;
-        }
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => destination),
+          MaterialPageRoute(
+            builder: (context) => SeatLayoutPage(
+              roomID: roomID, // int
+              roomNumber: roomNumber,
+              timeSlot: 'Available Now',
+              userId: userId,
+              userEmail: userEmail,
+              userName: userName,
+              userJCUID: userJCUID,
+            ),
+          ),
         );
       },
       child: Container(
@@ -562,10 +368,7 @@ class VenueCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right,
-              color: Colors.grey,
-            ),
+            const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
       ),
