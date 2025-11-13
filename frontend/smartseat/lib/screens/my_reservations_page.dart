@@ -1,5 +1,7 @@
+// frontend/smartseat/lib/screens/my_reservations_page.dart
 import 'package:flutter/material.dart';
 import 'package:smartseat/screens/student_home_page.dart';
+import 'package:smartseat/screens/confirmed_page.dart';
 
 class MyReservationsPage extends StatefulWidget {
   final String userId;
@@ -527,12 +529,31 @@ class _MyReservationsPageState extends State<MyReservationsPage> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Modify feature coming soon!'),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
+                      // Navigate to Confirmed Page for seat 55
+                      if (reservation['seatNumber'] == 55) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConfirmedPage(
+                              seatNumber: reservation['seatNumber'],
+                              roomNumber: reservation['room'],
+                              timeSlot: reservation['time'],
+                              userId: widget.userId,
+                              userEmail: widget.userEmail,
+                              userName: widget.userName,
+                              userJCUID: widget.userJCUID,
+                              confirmationId: reservation['confirmationId'],
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Modify feature coming soon!'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: Colors.grey[300]!),
@@ -540,9 +561,9 @@ class _MyReservationsPageState extends State<MyReservationsPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Modify',
-                      style: TextStyle(color: Colors.black87),
+                    child: Text(
+                      reservation['seatNumber'] == 55 ? 'Confirm' : 'Modify',
+                      style: const TextStyle(color: Colors.black87),
                     ),
                   ),
                 ),
