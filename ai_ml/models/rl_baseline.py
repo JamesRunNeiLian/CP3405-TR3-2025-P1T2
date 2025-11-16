@@ -109,7 +109,7 @@ def run_simulation():
     
     print("\nFinal Learned Q-Values (Agent's belief of Click-Through Rate):")
     for i in range(k):
-        print(f"  {strategy_names[i]:<32}: {agent.q_values[i]:.4f} (Tried {agent.n_pulls[i]} times)")
+        print(f"  {strategy_names[i]:<32}: {agent.q_values[i]:.4f} (Tried {int(agent.n_pulls[i])} times)")
 
     print("\nComparison to Ground Truth:")
     print(f"  True Probabilities: {true_click_through_rates}")

@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "SmartSeat RL API",
+    "description": "Reinforcement Learning Seat Recommendation API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["health"]
+        },
+        "description": "Check if API is healthy and running"
+      }
+    },
+    {
+      "name": "Get Recommendation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"student123\",\n  \"classroom_id\": \"library_L1\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/rl/recommend",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["rl", "recommend"]
+        },
+        "description": "Get seat zone recommendation from RL model"
+      }
+    },
+    {
+      "name": "Submit Positive Feedback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"strategy_id\": 0,\n  \"accepted\": true,\n  \"user_id\": \"student123\",\n  \"seat_id\": \"Q-A01\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/rl/feedback",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["rl", "feedback"]
+        },
+        "description": "Submit positive feedback (user accepted recommendation)"
+      }
+    },
+    {
+      "name": "Submit Negative Feedback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"strategy_id\": 0,\n  \"accepted\": false,\n  \"user_id\": \"student123\",\n  \"seat_id\": \"D-B05\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/rl/feedback",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["rl", "feedback"]
+        },
+        "description": "Submit negative feedback (user rejected recommendation)"
+      }
+    },
+    {
+      "name": "Get Model Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/rl/status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["rl", "status"]
+        },
+        "description": "Get current status of all RL strategies"
+      }
+    },
+    {
+      "name": "Reset Model",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/rl/reset",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["rl", "reset"]
+        },
+        "description": "Reset RL model (WARNING: Clears all learning data)"
+      }
+    },
+    {
+      "name": "Get Occupancy Forecast",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/predict?hours=24",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["predict"],
+          "query": [
+            {
+              "key": "hours",
+              "value": "24",
+              "description": "Number of hours to forecast"
+            }
+          ]
+        },
+        "description": "Get occupancy forecast using ARIMA model"
+      }
+    }
+  ]
+}
+
