@@ -72,6 +72,7 @@ class _SeatFinderPageState extends State<SeatFinderPage> {
     },
   ];
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
