@@ -4,6 +4,7 @@ import 'package:smartseat/screens/seat_layout_page_c3_04.dart';
 import 'package:smartseat/screens/my_reservations_page.dart';
 import 'package:smartseat/screens/student_profile_page.dart';
 import 'package:smartseat/screens/venue_page.dart';
+import 'package:smartseat/screens/ai_seat_recommendation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentHomePage extends StatefulWidget {
@@ -116,7 +117,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
     );
   }
 }
-
 
 class HomeTabContent extends StatefulWidget {
   final String userId;
@@ -379,11 +379,13 @@ class _HomeTabContentState extends State<HomeTabContent> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => VenuePage(
+                        builder: (context) => AiSeatRecommendationPage(
                           userId: widget.userId,
                           userEmail: widget.userEmail,
                           userName: widget.userName,
                           userJCUID: widget.userJCUID,
+                          roomNumber: 'C4-14',
+                          timeSlot: 'Today 2:00 PM',
                         ),
                       ),
                     );

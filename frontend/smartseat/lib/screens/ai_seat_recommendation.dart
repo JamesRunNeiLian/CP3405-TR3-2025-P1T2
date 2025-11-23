@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartseat/screens/seat_detail_page.dart';
 
-class SeatFinderPage extends StatefulWidget {
+class AiSeatRecommendationPage extends StatefulWidget {
   final String userId;
   final String userEmail;
   final String userName;
@@ -9,7 +9,7 @@ class SeatFinderPage extends StatefulWidget {
   final String roomNumber;
   final String timeSlot;
 
-  const SeatFinderPage({
+  const AiSeatRecommendationPage({
     super.key,
     required this.userId,
     required this.userEmail,
@@ -20,10 +20,10 @@ class SeatFinderPage extends StatefulWidget {
   });
 
   @override
-  State<SeatFinderPage> createState() => _SeatFinderPageState();
+  State<AiSeatRecommendationPage> createState() => _AiSeatRecommendationPageState();
 }
 
-class _SeatFinderPageState extends State<SeatFinderPage> {
+class _AiSeatRecommendationPageState extends State<AiSeatRecommendationPage> {
   // Recommendation data
   final List<Map<String, dynamic>> recommendations = [
     {
@@ -43,7 +43,7 @@ class _SeatFinderPageState extends State<SeatFinderPage> {
       'matchPercentage': 85,
       'matchType': 'Good Match',
       'features': [
-        {'icon': Icons.visibility_good, 'label': 'Clear board visibility', 'color': Colors.green},
+        {'icon': Icons.visibility, 'label': 'Clear board visibility', 'color': Colors.green},
         {'icon': Icons.electrical_services, 'label': 'Power outlet nearby', 'color': Colors.blue},
         {'icon': Icons.signal_cellular_4_bar, 'label': 'Strong Wifi signal', 'color': Colors.orange},
       ],
@@ -71,7 +71,6 @@ class _SeatFinderPageState extends State<SeatFinderPage> {
       ],
     },
   ];
-
 
   @override
   Widget build(BuildContext context) {
