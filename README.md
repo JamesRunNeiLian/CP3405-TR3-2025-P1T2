@@ -25,3 +25,8 @@ Smartseat is a seat reservation and information application for students and lec
 - Seats/Rooms reservation history
 - Admin dashboard on details of users, seats, rooms
 
+# Future Updates
+
+- Fixing Errors and Bugs
+- Full Implementation of Backend and AI
+- Design Improvements
