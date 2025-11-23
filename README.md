@@ -25,9 +25,31 @@ Smartseat is a seat reservation and information application for students and lec
 - Seats/Rooms reservation history
 - Admin dashboard on details of users, seats, rooms
 
+# Project status and GitHub branches
+
+•	Main : the complete working state of the project. Most of the frontend pages are hard-coded and backend has not been implemented so that it does not ruin the project.
+•	YeNaing_Integration : Partial Integration with backend has been done
+•	David_check_commit : The latest state of the project. Partial Integration with the backend has been done and updates on frontend such as AI recommendations pages are added.
+•	Other branches : Backup and abandoned due to working on the above branches
+
+# Bug Fixing
+
+Due to some temporary files being pushed to GitHub, the project may not successfully run on the first try. This is due to the length of some temporary files that were pushed. To fix it, you must run this command in the powershell or terminal to allow longpath names "git config --global core.longpaths true". These temporary files will be cleaned and refactored in the future.
+
 # Future Updates
 
 - Fixing Errors and Bugs
 - Refactor the project
 - Full Implementation of Backend and AI
 - Design Improvements
+
+# Credits
+
+Team 2 Members
+1.	Ye Naing,
+2.	Thu Nyan Tun,
+3.	Win Min Oo,
+4.	James Run Nei Lian,
+5.	Langxuan Cui (Hugo),
+6.	Shuoming Liu (Gordon)
+
