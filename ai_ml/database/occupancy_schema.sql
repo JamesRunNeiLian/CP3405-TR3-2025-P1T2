@@ -21,10 +21,18 @@ CREATE TABLE IF NOT EXISTS occupancy_history (
 CREATE INDEX idx_occupancy_timestamp ON occupancy_history(timestamp);
 CREATE INDEX idx_occupancy_classroom ON occupancy_history(classroom_id);
 
--- Add constraints
-ALTER TABLE occupancy_history 
-    ADD CONSTRAINT check_occupancy_range 
-    CHECK (occupancy_percentage >= 0 AND occupancy_percentage <= 100);
+-- Add constraint (with conditional check to avoid duplicate)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'check_occupancy_range'
+    ) THEN
+        ALTER TABLE occupancy_history 
+            ADD CONSTRAINT check_occupancy_range 
+            CHECK (occupancy_percentage >= 0 AND occupancy_percentage <= 100);
+    END IF;
+END $$;
 
 -- Add comments
 COMMENT ON TABLE occupancy_history IS 'Historical occupancy data for forecasting';

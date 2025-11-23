@@ -43,9 +43,13 @@ try:
     data.set_index('timestamp', inplace=True)
     data = data.sort_index()
     
+    # Explicitly set hourly frequency to avoid warnings
+    data.index = pd.DatetimeIndex(data.index, freq='H')
+    
     print(f"✓ Fetched {len(data)} occupancy records from Supabase")
     print(f"  Date range: {data.index.min()} to {data.index.max()}")
     print(f"  Occupancy range: {data['occupancy_percentage'].min():.2f}% to {data['occupancy_percentage'].max():.2f}%")
+    print(f"  Frequency: {data.index.freq} (hourly)")
     
 except Exception as e:
     print(f"✗ Error fetching data: {e}")
