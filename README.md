@@ -6,15 +6,15 @@ Smartseat is a seat reservation and information application for students and lec
 
 # Screenshots
 
-<img width="472" height="932" alt="LandingPage" src="https://github.com/user-attachments/assets/367af838-8888-4103-b62a-63a7495bff1f" />
-<img width="470" height="937" alt="StudentHome" src="https://github.com/user-attachments/assets/dd96bb4e-b71e-4fef-b43a-19dc7d75bcf6" />
-<img width="622" height="856" alt="StudentSeatReservation" src="https://github.com/user-attachments/assets/7695165b-0b7d-433a-8c34-a69b60dbb0d2" />
-<img width="463" height="992" alt="LecturerHome" src="https://github.com/user-attachments/assets/e0d6bb86-b36e-4c55-a1c3-520def42b236" />
-<img width="473" height="882" alt="LecturerSeat" src="https://github.com/user-attachments/assets/10d84083-ae68-4575-af16-0b1c51ff1a72" />
-<img width="470" height="776" alt="LecturerRoomBooking" src="https://github.com/user-attachments/assets/a216b7a6-a584-44b7-8195-2c5e6bbca5d3" />
-<img width="618" height="843" alt="AdminHome" src="https://github.com/user-attachments/assets/88edb3d7-7a54-468f-9608-55aa6e9b0473" />
-<img width="623" height="847" alt="AdminSeatDetails" src="https://github.com/user-attachments/assets/463995cb-e398-4bc1-9beb-d906b32dcc8d" />
-<img width="622" height="917" alt="AdminSeatInfo2" src="https://github.com/user-attachments/assets/5a9fa783-f025-4c77-a81a-d3430bf728c3" />
+<img width="236" height="466" alt="LandingPage" src="https://github.com/user-attachments/assets/367af838-8888-4103-b62a-63a7495bff1f" />
+<img width="235" height="468" alt="StudentHome" src="https://github.com/user-attachments/assets/dd96bb4e-b71e-4fef-b43a-19dc7d75bcf6" />
+<img width="311" height="428" alt="StudentSeatReservation" src="https://github.com/user-attachments/assets/7695165b-0b7d-433a-8c34-a69b60dbb0d2" />
+<img width="232" height="496" alt="LecturerHome" src="https://github.com/user-attachments/assets/e0d6bb86-b36e-4c55-a1c3-520def42b236" />
+<img width="236" height="441" alt="LecturerSeat" src="https://github.com/user-attachments/assets/10d84083-ae68-4575-af16-0b1c51ff1a72" />
+<img width="235" height="388" alt="LecturerRoomBooking" src="https://github.com/user-attachments/assets/a216b7a6-a584-44b7-8195-2c5e6bbca5d3" />
+<img width="309" height="421" alt="AdminHome" src="https://github.com/user-attachments/assets/88edb3d7-7a54-468f-9608-55aa6e9b0473" />
+<img width="312" height="423" alt="AdminSeatDetails" src="https://github.com/user-attachments/assets/463995cb-e398-4bc1-9beb-d906b32dcc8d" />
+<img width="311" height="458" alt="AdminSeatInfo2" src="https://github.com/user-attachments/assets/5a9fa783-f025-4c77-a81a-d3430bf728c3" />
 
 # Features
 
