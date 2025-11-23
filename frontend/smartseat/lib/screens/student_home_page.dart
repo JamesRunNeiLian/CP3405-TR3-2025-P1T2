@@ -65,7 +65,21 @@ class _StudentHomePageState extends State<StudentHomePage> {
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: (index) {
-            if (index == 2) {
+            if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AiSeatRecommendationPage(
+                    userId: widget.userId,
+                    userEmail: widget.userEmail,
+                    userName: widget.userName,
+                    userJCUID: widget.userJCUID,
+                    roomNumber: 'C4-14',
+                    timeSlot: 'Today 2:00 PM',
+                  ),
+                ),
+              );
+            } else if (index == 2) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -97,9 +111,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_today),
-              label: 'Schedule',
+              icon: Icon(Icons.smart_toy_outlined),
+              activeIcon: Icon(Icons.smart_toy),
+              label: 'AI Help',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.event_seat_outlined),
@@ -175,23 +189,56 @@ class _HomeTabContentState extends State<HomeTabContent> {
                 ),
               ),
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Welcome back,',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Welcome back,',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        displayName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    displayName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StudentProfilePage(
+                            userId: widget.userId,
+                            userEmail: widget.userEmail,
+                            userName: widget.userName,
+                            userJCUID: widget.userJCUID,
+                            program: widget.program,
+                          ),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 28,
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        displayName[0].toUpperCase(),
+                        style: const TextStyle(
+                          color: Color(0xFF1E88E5),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
